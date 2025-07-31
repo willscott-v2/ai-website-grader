@@ -54,6 +54,9 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     const { generateMarkdownReport } = require('@/lib/exporters');
     const markdownContent = generateMarkdownReport(analysis);
     
+    // Helper function to round numbers
+    const round = (num: number) => Math.round(num * 100) / 100;
+    
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -181,7 +184,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <p><strong>Website:</strong> ${analysis.url}</p>
           <p><strong>Title:</strong> ${analysis.title}</p>
           <p><strong>Generated:</strong> ${new Date(analysis.timestamp).toLocaleDateString()}</p>
-          <p><strong>Overall Score:</strong> <span class="score">${analysis.overallScore}%</span></p>
+          <p><strong>Overall Score:</strong> <span class="score">${round(analysis.overallScore)}%</span></p>
         </div>
 
         <div class="section">
@@ -202,32 +205,32 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             <tbody>
               <tr>
                 <td><strong>AI Optimization</strong></td>
-                <td class="score">${analysis.aiOptimization.score}%</td>
+                <td class="score">${round(analysis.aiOptimization.score)}%</td>
                 <td class="status">${analysis.aiOptimization.status}</td>
               </tr>
               <tr>
                 <td><strong>Content Quality</strong></td>
-                <td class="score">${analysis.contentQuality.score}%</td>
+                <td class="score">${round(analysis.contentQuality.score)}%</td>
                 <td class="status">${analysis.contentQuality.status}</td>
               </tr>
               <tr>
                 <td><strong>Technical SEO</strong></td>
-                <td class="score">${analysis.technicalSEO.score}%</td>
+                <td class="score">${round(analysis.technicalSEO.score)}%</td>
                 <td class="status">${analysis.technicalSEO.status}</td>
               </tr>
               <tr>
                 <td><strong>Authority & Trust</strong></td>
-                <td class="score">${analysis.authority.score}%</td>
+                <td class="score">${round(analysis.authority.score)}%</td>
                 <td class="status">${analysis.authority.status}</td>
               </tr>
               <tr>
                 <td><strong>User Experience</strong></td>
-                <td class="score">${analysis.userExperience.score}%</td>
+                <td class="score">${round(analysis.userExperience.score)}%</td>
                 <td class="status">${analysis.userExperience.status}</td>
               </tr>
               <tr>
                 <td><strong>Content Structure</strong></td>
-                <td class="score">${analysis.contentStructure.score}%</td>
+                <td class="score">${round(analysis.contentStructure.score)}%</td>
                 <td class="status">${analysis.contentStructure.status}</td>
               </tr>
             </tbody>
@@ -235,7 +238,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         </div>
 
         <div class="section">
-          <h2>AI Optimization (${analysis.aiOptimization.score}%)</h2>
+          <h2>AI Optimization (${round(analysis.aiOptimization.score)}%)</h2>
           <p><em>Optimized for AI search engines by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -255,17 +258,17 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Chunkability:</strong> ${analysis.aiOptimization.chunkability}%</li>
-              <li><strong>Q&A Format:</strong> ${analysis.aiOptimization.qaFormat}%</li>
-              <li><strong>Entity Recognition:</strong> ${analysis.aiOptimization.entityRecognition}%</li>
-              <li><strong>Factual Density:</strong> ${analysis.aiOptimization.factualDensity}%</li>
-              <li><strong>Semantic Clarity:</strong> ${analysis.aiOptimization.semanticClarity}%</li>
+              <li><strong>Chunkability:</strong> ${round(analysis.aiOptimization.chunkability)}%</li>
+              <li><strong>Q&A Format:</strong> ${round(analysis.aiOptimization.qaFormat)}%</li>
+              <li><strong>Entity Recognition:</strong> ${round(analysis.aiOptimization.entityRecognition)}%</li>
+              <li><strong>Factual Density:</strong> ${round(analysis.aiOptimization.factualDensity)}%</li>
+              <li><strong>Semantic Clarity:</strong> ${round(analysis.aiOptimization.semanticClarity)}%</li>
             </ul>
           </div>
         </div>
 
         <div class="section">
-          <h2>Content Quality (${analysis.contentQuality.score}%)</h2>
+          <h2>Content Quality (${round(analysis.contentQuality.score)}%)</h2>
           <p><em>Content optimization powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -285,17 +288,17 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Long-tail Keywords:</strong> ${analysis.contentQuality.longTailKeywords}%</li>
-              <li><strong>Comprehensive Coverage:</strong> ${analysis.contentQuality.comprehensiveCoverage}%</li>
-              <li><strong>Relevance to User Intent:</strong> ${analysis.contentQuality.relevanceToUserIntent}%</li>
-              <li><strong>Accuracy and Currency:</strong> ${analysis.contentQuality.accuracyAndCurrency}%</li>
-              <li><strong>Natural Language:</strong> ${analysis.contentQuality.naturalLanguage}%</li>
+              <li><strong>Long-tail Keywords:</strong> ${round(analysis.contentQuality.longTailKeywords)}%</li>
+              <li><strong>Comprehensive Coverage:</strong> ${round(analysis.contentQuality.comprehensiveCoverage)}%</li>
+              <li><strong>Relevance to User Intent:</strong> ${round(analysis.contentQuality.relevanceToUserIntent)}%</li>
+              <li><strong>Accuracy and Currency:</strong> ${round(analysis.contentQuality.accuracyAndCurrency)}%</li>
+              <li><strong>Natural Language:</strong> ${round(analysis.contentQuality.naturalLanguage)}%</li>
             </ul>
           </div>
         </div>
 
         <div class="section">
-          <h2>Technical SEO (${analysis.technicalSEO.score}%)</h2>
+          <h2>Technical SEO (${round(analysis.technicalSEO.score)}%)</h2>
           <p><em>Technical optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -315,16 +318,16 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Heading Structure:</strong> ${analysis.technicalSEO.headingStructure}%</li>
-              <li><strong>Meta Info:</strong> ${analysis.technicalSEO.metaInfo}%</li>
-              <li><strong>Alt Text:</strong> ${analysis.technicalSEO.altText}%</li>
-              <li><strong>Links:</strong> ${analysis.technicalSEO.links}%</li>
+              <li><strong>Heading Structure:</strong> ${round(analysis.technicalSEO.headingStructure)}%</li>
+              <li><strong>Meta Info:</strong> ${round(analysis.technicalSEO.metaInfo)}%</li>
+              <li><strong>Alt Text:</strong> ${round(analysis.technicalSEO.altText)}%</li>
+              <li><strong>Links:</strong> ${round(analysis.technicalSEO.links)}%</li>
             </ul>
           </div>
         </div>
 
         <div class="section">
-          <h2>Authority & Trust (${analysis.authority.score}%)</h2>
+          <h2>Authority & Trust (${round(analysis.authority.score)}%)</h2>
           <p><em>Authority building strategies from <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -344,17 +347,17 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Social Media Presence:</strong> ${analysis.authority.socialMediaPresence}%</li>
-              <li><strong>Company Information:</strong> ${analysis.authority.companyInformation}%</li>
-              <li><strong>Legal Compliance:</strong> ${analysis.authority.legalCompliance}%</li>
-              <li><strong>Testimonials:</strong> ${analysis.authority.testimonials}%</li>
-              <li><strong>Affiliations:</strong> ${analysis.authority.affiliations}%</li>
+              <li><strong>Social Media Presence:</strong> ${round(analysis.authority.socialMediaPresence)}%</li>
+              <li><strong>Company Information:</strong> ${round(analysis.authority.companyInformation)}%</li>
+              <li><strong>Legal Compliance:</strong> ${round(analysis.authority.legalCompliance)}%</li>
+              <li><strong>Testimonials:</strong> ${round(analysis.authority.testimonials)}%</li>
+              <li><strong>Affiliations:</strong> ${round(analysis.authority.affiliations)}%</li>
             </ul>
           </div>
         </div>
 
         <div class="section">
-          <h2>User Experience (${analysis.userExperience.score}%)</h2>
+          <h2>User Experience (${round(analysis.userExperience.score)}%)</h2>
           <p><em>UX optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -374,15 +377,15 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Contact Info:</strong> ${analysis.userExperience.contactInfo}%</li>
-              <li><strong>Calls to Action:</strong> ${analysis.userExperience.callsToAction}%</li>
-              <li><strong>Language:</strong> ${analysis.userExperience.language}%</li>
+              <li><strong>Contact Info:</strong> ${round(analysis.userExperience.contactInfo)}%</li>
+              <li><strong>Calls to Action:</strong> ${round(analysis.userExperience.callsToAction)}%</li>
+              <li><strong>Language:</strong> ${round(analysis.userExperience.language)}%</li>
             </ul>
           </div>
         </div>
 
         <div class="section">
-          <h2>Content Structure (${analysis.contentStructure.score}%)</h2>
+          <h2>Content Structure (${round(analysis.contentStructure.score)}%)</h2>
           <p><em>Content structure optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
@@ -402,9 +405,9 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Structured Content:</strong> ${analysis.contentStructure.structuredContent}%</li>
-              <li><strong>Multimedia:</strong> ${analysis.contentStructure.multimedia}%</li>
-              <li><strong>Readability:</strong> ${analysis.contentStructure.readability}%</li>
+              <li><strong>Structured Content:</strong> ${round(analysis.contentStructure.structuredContent)}%</li>
+              <li><strong>Multimedia:</strong> ${round(analysis.contentStructure.multimedia)}%</li>
+              <li><strong>Readability:</strong> ${round(analysis.contentStructure.readability)}%</li>
             </ul>
           </div>
         </div>

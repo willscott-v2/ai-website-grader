@@ -6,6 +6,9 @@ import { WebsiteAnalysis } from '@/types';
 export function generateMarkdownReport(analysis: WebsiteAnalysis): string {
   const date = new Date(analysis.timestamp).toLocaleDateString();
   
+  // Helper function to round numbers to 2 decimal places
+  const round = (num: number) => Math.round(num * 100) / 100;
+  
   return `# AI Website Grader Report
 
 **Powered by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts**
@@ -13,7 +16,7 @@ export function generateMarkdownReport(analysis: WebsiteAnalysis): string {
 **Website:** ${analysis.url}  
 **Title:** ${analysis.title}  
 **Generated:** ${date}  
-**Overall Score:** ${analysis.overallScore}%
+**Overall Score:** ${round(analysis.overallScore)}%
 
 ## Executive Summary
 
@@ -23,14 +26,14 @@ This report analyzes your website's readiness for AI-powered search engines, cha
 
 | Category | Score | Status |
 |----------|-------|--------|
-| **AI Optimization** | ${analysis.aiOptimization.score}% | ${analysis.aiOptimization.status} |
-| **Content Quality** | ${analysis.contentQuality.score}% | ${analysis.contentQuality.status} |
-| **Technical SEO** | ${analysis.technicalSEO.score}% | ${analysis.technicalSEO.status} |
-| **Authority & Trust** | ${analysis.authority.score}% | ${analysis.authority.status} |
-| **User Experience** | ${analysis.userExperience.score}% | ${analysis.userExperience.status} |
-| **Content Structure** | ${analysis.contentStructure.score}% | ${analysis.contentStructure.status} |
+| **AI Optimization** | ${round(analysis.aiOptimization.score)}% | ${analysis.aiOptimization.status} |
+| **Content Quality** | ${round(analysis.contentQuality.score)}% | ${analysis.contentQuality.status} |
+| **Technical SEO** | ${round(analysis.technicalSEO.score)}% | ${analysis.technicalSEO.status} |
+| **Authority & Trust** | ${round(analysis.authority.score)}% | ${analysis.authority.status} |
+| **User Experience** | ${round(analysis.userExperience.score)}% | ${analysis.userExperience.status} |
+| **Content Structure** | ${round(analysis.contentStructure.score)}% | ${analysis.contentStructure.status} |
 
-## AI Optimization (${analysis.aiOptimization.score}%)
+## AI Optimization (${round(analysis.aiOptimization.score)}%)
 
 *Optimized for AI search engines by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -41,13 +44,13 @@ ${analysis.aiOptimization.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.aiOptimization.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Chunkability:** ${analysis.aiOptimization.chunkability}%
-- **Q&A Format:** ${analysis.aiOptimization.qaFormat}%
-- **Entity Recognition:** ${analysis.aiOptimization.entityRecognition}%
-- **Factual Density:** ${analysis.aiOptimization.factualDensity}%
-- **Semantic Clarity:** ${analysis.aiOptimization.semanticClarity}%
+- **Chunkability:** ${round(analysis.aiOptimization.chunkability)}%
+- **Q&A Format:** ${round(analysis.aiOptimization.qaFormat)}%
+- **Entity Recognition:** ${round(analysis.aiOptimization.entityRecognition)}%
+- **Factual Density:** ${round(analysis.aiOptimization.factualDensity)}%
+- **Semantic Clarity:** ${round(analysis.aiOptimization.semanticClarity)}%
 
-## Content Quality (${analysis.contentQuality.score}%)
+## Content Quality (${round(analysis.contentQuality.score)}%)
 
 *Content optimization powered by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -58,13 +61,13 @@ ${analysis.contentQuality.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.contentQuality.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Long-tail Keywords:** ${analysis.contentQuality.longTailKeywords}%
-- **Comprehensive Coverage:** ${analysis.contentQuality.comprehensiveCoverage}%
-- **Relevance to User Intent:** ${analysis.contentQuality.relevanceToUserIntent}%
-- **Accuracy and Currency:** ${analysis.contentQuality.accuracyAndCurrency}%
-- **Natural Language:** ${analysis.contentQuality.naturalLanguage}%
+- **Long-tail Keywords:** ${round(analysis.contentQuality.longTailKeywords)}%
+- **Comprehensive Coverage:** ${round(analysis.contentQuality.comprehensiveCoverage)}%
+- **Relevance to User Intent:** ${round(analysis.contentQuality.relevanceToUserIntent)}%
+- **Accuracy and Currency:** ${round(analysis.contentQuality.accuracyAndCurrency)}%
+- **Natural Language:** ${round(analysis.contentQuality.naturalLanguage)}%
 
-## Technical SEO (${analysis.technicalSEO.score}%)
+## Technical SEO (${round(analysis.technicalSEO.score)}%)
 
 *Technical optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -75,12 +78,12 @@ ${analysis.technicalSEO.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.technicalSEO.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Heading Structure:** ${analysis.technicalSEO.headingStructure}%
-- **Meta Info:** ${analysis.technicalSEO.metaInfo}%
-- **Alt Text:** ${analysis.technicalSEO.altText}%
-- **Links:** ${analysis.technicalSEO.links}%
+- **Heading Structure:** ${round(analysis.technicalSEO.headingStructure)}%
+- **Meta Info:** ${round(analysis.technicalSEO.metaInfo)}%
+- **Alt Text:** ${round(analysis.technicalSEO.altText)}%
+- **Links:** ${round(analysis.technicalSEO.links)}%
 
-## Authority & Trust (${analysis.authority.score}%)
+## Authority & Trust (${round(analysis.authority.score)}%)
 
 *Authority building strategies from [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -91,13 +94,13 @@ ${analysis.authority.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.authority.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Social Media Presence:** ${analysis.authority.socialMediaPresence}%
-- **Company Information:** ${analysis.authority.companyInformation}%
-- **Legal Compliance:** ${analysis.authority.legalCompliance}%
-- **Testimonials:** ${analysis.authority.testimonials}%
-- **Affiliations:** ${analysis.authority.affiliations}%
+- **Social Media Presence:** ${round(analysis.authority.socialMediaPresence)}%
+- **Company Information:** ${round(analysis.authority.companyInformation)}%
+- **Legal Compliance:** ${round(analysis.authority.legalCompliance)}%
+- **Testimonials:** ${round(analysis.authority.testimonials)}%
+- **Affiliations:** ${round(analysis.authority.affiliations)}%
 
-## User Experience (${analysis.userExperience.score}%)
+## User Experience (${round(analysis.userExperience.score)}%)
 
 *UX optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -108,11 +111,11 @@ ${analysis.userExperience.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.userExperience.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Contact Info:** ${analysis.userExperience.contactInfo}%
-- **Calls to Action:** ${analysis.userExperience.callsToAction}%
-- **Language:** ${analysis.userExperience.language}%
+- **Contact Info:** ${round(analysis.userExperience.contactInfo)}%
+- **Calls to Action:** ${round(analysis.userExperience.callsToAction)}%
+- **Language:** ${round(analysis.userExperience.language)}%
 
-## Content Structure (${analysis.contentStructure.score}%)
+## Content Structure (${round(analysis.contentStructure.score)}%)
 
 *Content structure optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
@@ -123,9 +126,9 @@ ${analysis.contentStructure.findings.map(finding => `- ${finding}`).join('\n')}
 ${analysis.contentStructure.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 ### Detailed Scores:
-- **Structured Content:** ${analysis.contentStructure.structuredContent}%
-- **Multimedia:** ${analysis.contentStructure.multimedia}%
-- **Readability:** ${analysis.contentStructure.readability}%
+- **Structured Content:** ${round(analysis.contentStructure.structuredContent)}%
+- **Multimedia:** ${round(analysis.contentStructure.multimedia)}%
+- **Readability:** ${round(analysis.contentStructure.readability)}%
 
 ## Priority Content Improvements
 
@@ -183,6 +186,9 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
       return false;
     };
     
+    // Helper function to round numbers
+    const round = (num: number) => Math.round(num * 100) / 100;
+    
     // Split markdown content into lines
     const lines = markdownContent.split('\n');
     
@@ -221,7 +227,49 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         pdf.text(line.substring(2, line.length - 2), margin, yPos);
         yPos += 8;
       } else if (line.startsWith('|')) {
-        // Table row - skip for now as tables are complex
+        // Table row - handle table rendering
+        if (line.includes('Category') && line.includes('Score') && line.includes('Status')) {
+          // Table header
+          checkPageBreak(20);
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          
+          // Draw table headers
+          pdf.text('Category', margin, yPos);
+          pdf.text('Score', margin + 80, yPos);
+          pdf.text('Status', margin + 120, yPos);
+          yPos += 8;
+          
+          // Draw separator line
+          pdf.line(margin, yPos, margin + 170, yPos);
+          yPos += 8;
+          
+          // Add table data
+          const scores = [
+            ['AI Optimization', round(analysis.aiOptimization.score), analysis.aiOptimization.status],
+            ['Content Quality', round(analysis.contentQuality.score), analysis.contentQuality.status],
+            ['Technical SEO', round(analysis.technicalSEO.score), analysis.technicalSEO.status],
+            ['Authority & Trust', round(analysis.authority.score), analysis.authority.status],
+            ['User Experience', round(analysis.userExperience.score), analysis.userExperience.status],
+            ['Content Structure', round(analysis.contentStructure.score), analysis.contentStructure.status]
+          ];
+          
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          scores.forEach((scoreData) => {
+            const category = scoreData[0] as string;
+            const score = scoreData[1] as number;
+            const status = scoreData[2] as string;
+            
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(category, margin, yPos);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(`${score}%`, margin + 80, yPos);
+            pdf.text(status, margin + 120, yPos);
+            yPos += 6;
+          });
+          yPos += 10;
+        }
         continue;
       } else if (line.startsWith('- ')) {
         // List item
@@ -262,7 +310,7 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
             });
           }
           
-          // Add link text with underline
+          // Add link text with blue color
           checkPageBreak(5);
           pdf.setFontSize(9);
           pdf.setFont('helvetica', 'normal');
