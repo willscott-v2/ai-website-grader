@@ -168,422 +168,352 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
     // Helper function to round numbers
     const round = (num: number) => Math.round(num * 100) / 100;
     
-    // Create HTML content for PDF
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>AI Website Grader Report - ${analysis.title}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            margin: 20px; 
-            color: #333;
-            font-size: 12px;
-          }
-          h1 { 
-            color: #2c3e50; 
-            border-bottom: 3px solid #e67e22; 
-            padding-bottom: 10px; 
-            font-size: 24px;
-            margin-top: 0;
-          }
-          h2 { 
-            color: #34495e; 
-            margin-top: 25px; 
-            font-size: 18px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-          }
-          h3 { 
-            color: #2c3e50; 
-            margin-top: 20px; 
-            font-size: 16px;
-            font-weight: bold;
-          }
-          table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin: 15px 0; 
-            font-size: 11px;
-          }
-          th, td { 
-            border: 1px solid #ddd; 
-            padding: 10px; 
-            text-align: left; 
-          }
-          th { 
-            background-color: #f8f9fa; 
-            font-weight: bold; 
-          }
-          .score { 
-            font-weight: bold; 
-            color: #e67e22; 
-          }
-          .status { 
-            text-transform: capitalize; 
-          }
-          .section { 
-            margin-bottom: 25px; 
-          }
-          .findings, .recommendations { 
-            margin: 12px 0; 
-          }
-          .detailed-scores { 
-            margin: 12px 0; 
-          }
-          .detailed-scores ul { 
-            list-style: none; 
-            padding-left: 0; 
-          }
-          .detailed-scores li { 
-            margin: 4px 0; 
-          }
-          .improvements { 
-            margin: 15px 0; 
-          }
-          .improvement-item { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
-            margin: 12px 0; 
-            border-radius: 5px;
-          }
-          .current { 
-            background-color: #fff3cd; 
-            border-left: 4px solid #ffc107; 
-            padding: 8px; 
-            margin: 8px 0; 
-          }
-          .improved { 
-            background-color: #d4edda; 
-            border-left: 4px solid #28a745; 
-            padding: 8px; 
-            margin: 8px 0; 
-          }
-          .reasoning { 
-            background-color: #e2e3e5; 
-            border-left: 4px solid #6c757d; 
-            padding: 8px; 
-            margin: 8px 0; 
-          }
-          .next-steps { 
-            background-color: #d1ecf1; 
-            border: 1px solid #bee5eb; 
-            padding: 12px; 
-            border-radius: 5px; 
-          }
-          .footer { 
-            margin-top: 30px; 
-            padding-top: 15px; 
-            border-top: 1px solid #ddd; 
-            font-size: 10px; 
-            color: #666; 
-          }
-          a {
-            color: #3498db;
-            text-decoration: underline;
-          }
-          @media print {
-            body { margin: 0; }
-            .no-print { display: none; }
-          }
-        </style>
-      </head>
-      <body>
-        <h1>AI Website Grader Report</h1>
-        <p><strong>Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</strong></p>
-        
-        <div class="section">
-          <h3>Website Information</h3>
-          <p><strong>Website:</strong> ${analysis.url}</p>
-          <p><strong>Title:</strong> ${analysis.title}</p>
-          <p><strong>Generated:</strong> ${new Date(analysis.timestamp).toLocaleDateString()}</p>
-          <p><strong>Overall Score:</strong> <span class="score">${round(analysis.overallScore)}%</span></p>
-        </div>
-
-        <div class="section">
-          <h2>Executive Summary</h2>
-          <p>This report analyzes your website's readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
-        </div>
-
-        <div class="section">
-          <h2>Score Breakdown</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Category</th>
-                <th>Score</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>AI Optimization</strong></td>
-                <td class="score">${round(analysis.aiOptimization.score)}%</td>
-                <td class="status">${analysis.aiOptimization.status}</td>
-              </tr>
-              <tr>
-                <td><strong>Content Quality</strong></td>
-                <td class="score">${round(analysis.contentQuality.score)}%</td>
-                <td class="status">${analysis.contentQuality.status}</td>
-              </tr>
-              <tr>
-                <td><strong>Technical SEO</strong></td>
-                <td class="score">${round(analysis.technicalSEO.score)}%</td>
-                <td class="status">${analysis.technicalSEO.status}</td>
-              </tr>
-              <tr>
-                <td><strong>Authority & Trust</strong></td>
-                <td class="score">${round(analysis.authority.score)}%</td>
-                <td class="status">${analysis.authority.status}</td>
-              </tr>
-              <tr>
-                <td><strong>User Experience</strong></td>
-                <td class="score">${round(analysis.userExperience.score)}%</td>
-                <td class="status">${analysis.userExperience.status}</td>
-              </tr>
-              <tr>
-                <td><strong>Content Structure</strong></td>
-                <td class="score">${round(analysis.contentStructure.score)}%</td>
-                <td class="status">${analysis.contentStructure.status}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="section">
-          <h2>AI Optimization (${round(analysis.aiOptimization.score)}%)</h2>
-          <p><em>Optimized for AI search engines by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.aiOptimization.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.aiOptimization.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Chunkability:</strong> ${round(analysis.aiOptimization.chunkability)}%</li>
-              <li><strong>Q&A Format:</strong> ${round(analysis.aiOptimization.qaFormat)}%</li>
-              <li><strong>Entity Recognition:</strong> ${round(analysis.aiOptimization.entityRecognition)}%</li>
-              <li><strong>Factual Density:</strong> ${round(analysis.aiOptimization.factualDensity)}%</li>
-              <li><strong>Semantic Clarity:</strong> ${round(analysis.aiOptimization.semanticClarity)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Content Quality (${round(analysis.contentQuality.score)}%)</h2>
-          <p><em>Content optimization powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.contentQuality.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.contentQuality.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Long-tail Keywords:</strong> ${round(analysis.contentQuality.longTailKeywords)}%</li>
-              <li><strong>Comprehensive Coverage:</strong> ${round(analysis.contentQuality.comprehensiveCoverage)}%</li>
-              <li><strong>Relevance to User Intent:</strong> ${round(analysis.contentQuality.relevanceToUserIntent)}%</li>
-              <li><strong>Accuracy and Currency:</strong> ${round(analysis.contentQuality.accuracyAndCurrency)}%</li>
-              <li><strong>Natural Language:</strong> ${round(analysis.contentQuality.naturalLanguage)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Technical SEO (${round(analysis.technicalSEO.score)}%)</h2>
-          <p><em>Technical optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.technicalSEO.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.technicalSEO.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Heading Structure:</strong> ${round(analysis.technicalSEO.headingStructure)}%</li>
-              <li><strong>Meta Info:</strong> ${round(analysis.technicalSEO.metaInfo)}%</li>
-              <li><strong>Alt Text:</strong> ${round(analysis.technicalSEO.altText)}%</li>
-              <li><strong>Links:</strong> ${round(analysis.technicalSEO.links)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Authority & Trust (${round(analysis.authority.score)}%)</h2>
-          <p><em>Authority building strategies from <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.authority.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.authority.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Social Media Presence:</strong> ${round(analysis.authority.socialMediaPresence)}%</li>
-              <li><strong>Company Information:</strong> ${round(analysis.authority.companyInformation)}%</li>
-              <li><strong>Legal Compliance:</strong> ${round(analysis.authority.legalCompliance)}%</li>
-              <li><strong>Testimonials:</strong> ${round(analysis.authority.testimonials)}%</li>
-              <li><strong>Affiliations:</strong> ${round(analysis.authority.affiliations)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>User Experience (${round(analysis.userExperience.score)}%)</h2>
-          <p><em>UX optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.userExperience.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.userExperience.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Contact Info:</strong> ${round(analysis.userExperience.contactInfo)}%</li>
-              <li><strong>Calls to Action:</strong> ${round(analysis.userExperience.callsToAction)}%</li>
-              <li><strong>Language:</strong> ${round(analysis.userExperience.language)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Content Structure (${round(analysis.contentStructure.score)}%)</h2>
-          <p><em>Content structure optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.contentStructure.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.contentStructure.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Structured Content:</strong> ${round(analysis.contentStructure.structuredContent)}%</li>
-              <li><strong>Multimedia:</strong> ${round(analysis.contentStructure.multimedia)}%</li>
-              <li><strong>Readability:</strong> ${round(analysis.contentStructure.readability)}%</li>
-            </ul>
-          </div>
-        </div>
-
-        ${analysis.contentImprovements.length > 0 ? `
-        <div class="section">
-          <h2>Priority Content Improvements</h2>
-          <p><em>Strategic improvements recommended by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
-          
-          ${analysis.contentImprovements.map((improvement, index) => `
-            <div class="improvement-item">
-              <h3>${index + 1}. ${improvement.section}</h3>
-              <div class="current">
-                <strong>Current:</strong> ${improvement.current}
-              </div>
-              <div class="improved">
-                <strong>Improved:</strong> ${improvement.improved}
-              </div>
-              <div class="reasoning">
-                <strong>Why this helps:</strong> ${improvement.reasoning}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-        ` : ''}
-
-        <div class="section">
-          <h2>Next Steps</h2>
-          <div class="next-steps">
-            <ol>
-              <li>Focus on AI Optimization - This is the most impactful area for future search visibility</li>
-              <li>Implement Priority Improvements - Start with the content improvements listed above</li>
-              <li>Monitor Progress - Re-run this analysis after implementing changes</li>
-              <li>Stay Updated - AI search algorithms evolve rapidly; regular audits are recommended</li>
-            </ol>
-          </div>
-        </div>
-
-        <div class="footer">
-          <p>Report generated by <a href="https://ai-grader.searchinfluence.com/">AI Website Grader</a> - Optimizing content for the AI-powered search future. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
-        </div>
-      </body>
-      </html>
-    `;
-
-    // Create a new window with the HTML content
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      throw new Error('Please allow popups to generate PDF');
-    }
-
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
+    // Create PDF using jsPDF
+    const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // Wait for content to load, then trigger print
-    printWindow.onload = () => {
-      printWindow.print();
-      printWindow.close();
+    let yPos = 20;
+    const pageHeight = 280; // Leave margin for footer
+    const margin = 20;
+    const contentWidth = 170;
+    
+    // Helper function to check page breaks
+    const checkPageBreak = (requiredSpace: number) => {
+      if (yPos + requiredSpace > pageHeight) {
+        pdf.addPage();
+        yPos = 20;
+        return true;
+      }
+      return false;
     };
+    
+    // Header
+    checkPageBreak(20);
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('AI Website Grader Report', margin, yPos);
+    yPos += 15;
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Powered by Search Influence - AI SEO Experts', margin, yPos);
+    yPos += 15;
+    
+    // Website Information
+    checkPageBreak(25);
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Website Information:', margin, yPos);
+    yPos += 8;
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Website: ${analysis.url}`, margin + 5, yPos);
+    yPos += 6;
+    pdf.text(`Title: ${analysis.title}`, margin + 5, yPos);
+    yPos += 6;
+    pdf.text(`Generated: ${new Date(analysis.timestamp).toLocaleDateString()}`, margin + 5, yPos);
+    yPos += 6;
+    pdf.text(`Overall Score: ${round(analysis.overallScore)}%`, margin + 5, yPos);
+    yPos += 15;
+    
+    // Executive Summary
+    checkPageBreak(30);
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Executive Summary', margin, yPos);
+    yPos += 10;
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    const summaryText = 'This report analyzes your website\'s readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by Search Influence - AI SEO Experts.';
+    const summaryLines = pdf.splitTextToSize(summaryText, contentWidth);
+    summaryLines.forEach((line: string) => {
+      pdf.text(line, margin, yPos);
+      yPos += 5;
+    });
+    yPos += 10;
+    
+    // Score Breakdown
+    checkPageBreak(40);
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Score Breakdown', margin, yPos);
+    yPos += 15;
+    
+    // Score table headers
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Category', margin, yPos);
+    pdf.text('Score', margin + 80, yPos);
+    pdf.text('Status', margin + 120, yPos);
+    yPos += 8;
+    
+    // Table separator line
+    pdf.line(margin, yPos, margin + 170, yPos);
+    yPos += 8;
+    
+    // Score table rows
+    pdf.setFontSize(10);
+    const scores = [
+      ['AI Optimization', round(analysis.aiOptimization.score), analysis.aiOptimization.status],
+      ['Content Quality', round(analysis.contentQuality.score), analysis.contentQuality.status],
+      ['Technical SEO', round(analysis.technicalSEO.score), analysis.technicalSEO.status],
+      ['Authority & Trust', round(analysis.authority.score), analysis.authority.status],
+      ['User Experience', round(analysis.userExperience.score), analysis.userExperience.status],
+      ['Content Structure', round(analysis.contentStructure.score), analysis.contentStructure.status]
+    ];
+    
+    scores.forEach((scoreData) => {
+      const category = scoreData[0] as string;
+      const score = scoreData[1] as number;
+      const status = scoreData[2] as string;
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(category, margin, yPos);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${score}%`, margin + 80, yPos);
+      pdf.text(status, margin + 120, yPos);
+      yPos += 8;
+    });
+    yPos += 15;
+    
+    // Detailed Analysis Sections
+    const sections = [
+      {
+        title: 'AI Optimization',
+        data: analysis.aiOptimization,
+        subtitle: 'Optimized for AI search engines by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Chunkability', round(analysis.aiOptimization.chunkability)],
+          ['Q&A Format', round(analysis.aiOptimization.qaFormat)],
+          ['Entity Recognition', round(analysis.aiOptimization.entityRecognition)],
+          ['Factual Density', round(analysis.aiOptimization.factualDensity)],
+          ['Semantic Clarity', round(analysis.aiOptimization.semanticClarity)]
+        ]
+      },
+      {
+        title: 'Content Quality',
+        data: analysis.contentQuality,
+        subtitle: 'Content optimization powered by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Long-tail Keywords', round(analysis.contentQuality.longTailKeywords)],
+          ['Comprehensive Coverage', round(analysis.contentQuality.comprehensiveCoverage)],
+          ['Relevance to User Intent', round(analysis.contentQuality.relevanceToUserIntent)],
+          ['Accuracy and Currency', round(analysis.contentQuality.accuracyAndCurrency)],
+          ['Natural Language', round(analysis.contentQuality.naturalLanguage)]
+        ]
+      },
+      {
+        title: 'Technical SEO',
+        data: analysis.technicalSEO,
+        subtitle: 'Technical optimization by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Heading Structure', round(analysis.technicalSEO.headingStructure)],
+          ['Meta Info', round(analysis.technicalSEO.metaInfo)],
+          ['Alt Text', round(analysis.technicalSEO.altText)],
+          ['Links', round(analysis.technicalSEO.links)]
+        ]
+      },
+      {
+        title: 'Authority & Trust',
+        data: analysis.authority,
+        subtitle: 'Authority building strategies from Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Social Media Presence', round(analysis.authority.socialMediaPresence)],
+          ['Company Information', round(analysis.authority.companyInformation)],
+          ['Legal Compliance', round(analysis.authority.legalCompliance)],
+          ['Testimonials', round(analysis.authority.testimonials)],
+          ['Affiliations', round(analysis.authority.affiliations)]
+        ]
+      },
+      {
+        title: 'User Experience',
+        data: analysis.userExperience,
+        subtitle: 'UX optimization by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Contact Info', round(analysis.userExperience.contactInfo)],
+          ['Calls to Action', round(analysis.userExperience.callsToAction)],
+          ['Language', round(analysis.userExperience.language)]
+        ]
+      },
+      {
+        title: 'Content Structure',
+        data: analysis.contentStructure,
+        subtitle: 'Content structure optimization by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Structured Content', round(analysis.contentStructure.structuredContent)],
+          ['Multimedia', round(analysis.contentStructure.multimedia)],
+          ['Readability', round(analysis.contentStructure.readability)]
+        ]
+      }
+    ];
 
-    console.log('PDF generated successfully using HTML-to-PDF');
+    sections.forEach((section) => {
+      checkPageBreak(80);
+      
+      // Section header
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${section.title} (${round(section.data.score)}%)`, margin, yPos);
+      yPos += 8;
+      
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'italic');
+      pdf.text(section.subtitle, margin, yPos);
+      yPos += 8;
+      
+      // Key Findings
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Key Findings:', margin, yPos);
+      yPos += 8;
+      
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      section.data.findings.forEach(finding => {
+        const lines = pdf.splitTextToSize(`• ${finding}`, contentWidth);
+        lines.forEach((line: string) => {
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        yPos += 2;
+      });
+      
+      // Recommendations
+      yPos += 5;
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Recommendations:', margin, yPos);
+      yPos += 8;
+      
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      section.data.recommendations.forEach(rec => {
+        const lines = pdf.splitTextToSize(`• ${rec}`, contentWidth);
+        lines.forEach((line: string) => {
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        yPos += 2;
+      });
+      
+      // Detailed Scores
+      yPos += 5;
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Detailed Scores:', margin, yPos);
+      yPos += 8;
+      
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      section.detailedScores.forEach(([label, score]) => {
+        pdf.text(`• ${label}: ${score}%`, margin + 5, yPos);
+        yPos += 5;
+      });
+      
+      yPos += 10;
+    });
+    
+    // Priority Content Improvements
+    if (analysis.contentImprovements.length > 0) {
+      checkPageBreak(40);
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Priority Content Improvements', margin, yPos);
+      yPos += 8;
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Strategic improvements recommended by Search Influence - AI SEO Experts', margin, yPos);
+      yPos += 15;
+
+      analysis.contentImprovements.forEach((improvement, index) => {
+        checkPageBreak(40);
+        
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${index + 1}. ${improvement.section}`, margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        
+        const currentLines = pdf.splitTextToSize(`Current: ${improvement.current}`, contentWidth);
+        currentLines.forEach((line: string) => {
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        yPos += 2;
+        
+        const improvedLines = pdf.splitTextToSize(`Improved: ${improvement.improved}`, contentWidth);
+        improvedLines.forEach((line: string) => {
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        yPos += 2;
+        
+        const reasoningLines = pdf.splitTextToSize(`Why this helps: ${improvement.reasoning}`, contentWidth);
+        reasoningLines.forEach((line: string) => {
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
+          yPos += 5;
+        });
+        yPos += 8;
+      });
+    }
+    
+    // Next Steps
+    checkPageBreak(30);
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Next Steps', margin, yPos);
+    yPos += 8;
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    const nextSteps = [
+      'Focus on AI Optimization - This is the most impactful area for future search visibility',
+      'Implement Priority Improvements - Start with the content improvements listed above',
+      'Monitor Progress - Re-run this analysis after implementing changes',
+      'Stay Updated - AI search algorithms evolve rapidly; regular audits are recommended'
+    ];
+    nextSteps.forEach((step, index) => {
+      const lines = pdf.splitTextToSize(`${index + 1}. ${step}`, contentWidth);
+      lines.forEach((line: string) => {
+        checkPageBreak(5);
+        pdf.text(line, margin + 5, yPos);
+        yPos += 5;
+      });
+      yPos += 2;
+    });
+    
+    // Footer
+    yPos += 10;
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    const footerText = 'Report generated by AI Website Grader - Optimizing content for the AI-powered search future. Powered by Search Influence - AI SEO Experts.';
+    const footerLines = pdf.splitTextToSize(footerText, contentWidth);
+    footerLines.forEach((line: string) => {
+      checkPageBreak(5);
+      pdf.text(line, margin, yPos);
+      yPos += 5;
+    });
+    
+    // Add metadata
+    pdf.setProperties({
+      title: `AI Website Grader Report - ${analysis.title}`,
+      subject: 'Website Analysis Report',
+      author: 'AI Website Grader',
+      creator: 'AI Website Grader'
+    });
+
+    // Download the PDF
+    const fileName = `ai-grader-report-${analysis.url.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
+
+    console.log('PDF generated and downloaded successfully');
 
   } catch (error) {
     console.error('Error generating PDF:', error);
