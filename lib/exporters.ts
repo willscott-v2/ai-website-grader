@@ -213,18 +213,18 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         heightLeft -= pageHeight;
       }
 
-          // Add metadata
-    pdf.setProperties({
-      title: `AI Website Grader Report - ${analysis.title}`,
-      subject: 'Website Analysis Report',
-      author: 'AI Website Grader',
-      creator: 'AI Website Grader'
-    });
+      // Add metadata
+      pdf.setProperties({
+        title: `AI Website Grader Report - ${analysis.title}`,
+        subject: 'Website Analysis Report',
+        author: 'AI Website Grader',
+        creator: 'AI Website Grader'
+      });
 
-    // Add Search Influence branding to the first page
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Powered by Search Influence - AI SEO Experts', 20, 25);
+      // Add Search Influence branding to the first page
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Powered by Search Influence - AI SEO Experts', 20, 25);
 
       // Download the PDF
       const fileName = `ai-grader-report-${analysis.url.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -235,61 +235,89 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
     } catch (html2canvasError) {
       console.warn('html2canvas failed, falling back to text-based PDF:', html2canvasError);
       
-      // Fallback: Create a comprehensive text-based PDF
+      // Fallback: Create a comprehensive text-based PDF that matches markdown structure
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Add Search Influence branding
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Powered by Search Influence - AI SEO Experts', 20, 25);
+      let yPos = 20;
+      const pageHeight = 280; // Leave margin for footer
+      const margin = 20;
+      const contentWidth = 170;
       
-      // Set font
+      // Helper function to check page breaks
+      const checkPageBreak = (requiredSpace: number) => {
+        if (yPos + requiredSpace > pageHeight) {
+          pdf.addPage();
+          yPos = 20;
+          return true;
+        }
+        return false;
+      };
+
+      // Header
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('AI Website Grader Report', 20, 45);
+      pdf.text('AI Website Grader Report', margin, yPos);
+      yPos += 15;
       
-      pdf.setFontSize(12);
+      pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      pdf.text(`Website: ${analysis.url}`, 20, 60);
-      pdf.text(`Title: ${analysis.title}`, 20, 70);
-      pdf.text(`Overall Score: ${analysis.overallScore}%`, 20, 80);
-      pdf.text(`Generated: ${new Date(analysis.timestamp).toLocaleDateString()}`, 20, 90);
+      pdf.text('Powered by Search Influence - AI SEO Experts', margin, yPos);
+      yPos += 10;
+      
+      // Website Info
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Website Information:', margin, yPos);
+      yPos += 8;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Website: ${analysis.url}`, margin + 5, yPos);
+      yPos += 6;
+      pdf.text(`Title: ${analysis.title}`, margin + 5, yPos);
+      yPos += 6;
+      pdf.text(`Overall Score: ${analysis.overallScore}%`, margin + 5, yPos);
+      yPos += 6;
+      pdf.text(`Generated: ${new Date(analysis.timestamp).toLocaleDateString()}`, margin + 5, yPos);
+      yPos += 15;
 
       // Executive Summary
-      let yPos = 110;
+      checkPageBreak(30);
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Executive Summary', 20, yPos);
+      pdf.text('Executive Summary', margin, yPos);
       yPos += 10;
+      
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       const summaryText = 'This report analyzes your website\'s readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by Search Influence - AI SEO Experts.';
-      const summaryLines = pdf.splitTextToSize(summaryText, 170);
+      const summaryLines = pdf.splitTextToSize(summaryText, contentWidth);
       summaryLines.forEach((line: string) => {
-        pdf.text(line, 20, yPos);
+        pdf.text(line, margin, yPos);
         yPos += 5;
       });
-      yPos += 5;
-      
-      // Add score breakdown table
+      yPos += 10;
+
+      // Score Breakdown
+      checkPageBreak(40);
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Score Breakdown:', 20, yPos);
+      pdf.text('Score Breakdown', margin, yPos);
       yPos += 15;
       
-      // Table headers
+      // Score table headers
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Category', 20, yPos);
-      pdf.text('Score', 80, yPos);
-      pdf.text('Status', 120, yPos);
+      pdf.text('Category', margin, yPos);
+      pdf.text('Score', margin + 80, yPos);
+      pdf.text('Status', margin + 120, yPos);
       yPos += 8;
       
       // Table separator line
-      pdf.line(20, yPos, 180, yPos);
+      pdf.line(margin, yPos, margin + 170, yPos);
       yPos += 8;
       
-      // Table rows
+      // Score table rows
       pdf.setFontSize(10);
       const scores = [
         ['AI Optimization', analysis.aiOptimization.score, analysis.aiOptimization.status],
@@ -304,467 +332,209 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         const category = scoreData[0] as string;
         const score = scoreData[1] as number;
         const status = scoreData[2] as string;
+        
         pdf.setFont('helvetica', 'bold');
-        pdf.text(category, 20, yPos);
+        pdf.text(category, margin, yPos);
         pdf.setFont('helvetica', 'normal');
-        pdf.text(`${score}%`, 80, yPos);
-        pdf.text(status, 120, yPos);
+        pdf.text(`${score}%`, margin + 80, yPos);
+        pdf.text(status, margin + 120, yPos);
         yPos += 8;
       });
-      
-      // Add detailed analysis sections
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Detailed Analysis:', 20, yPos);
-      yPos += 10;
-      
-      // AI Optimization details
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`AI Optimization (${analysis.aiOptimization.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Optimized for AI search engines by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Chunkability: ${analysis.aiOptimization.chunkability}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Q&A Format: ${analysis.aiOptimization.qaFormat}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Entity Recognition: ${analysis.aiOptimization.entityRecognition}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Factual Density: ${analysis.aiOptimization.factualDensity}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Semantic Clarity: ${analysis.aiOptimization.semanticClarity}%`, 25, yPos);
-      yPos += 10;
-      
-      // Key findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-              analysis.aiOptimization.findings.forEach(finding => {
-          const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-          lines.forEach((line: string) => {
-            if (yPos > 280) {
-              pdf.addPage();
-              yPos = 20;
-            }
-            pdf.text(line, 25, yPos);
-            yPos += 5;
-          });
-          yPos += 2;
-        });
-      
-      // Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-              analysis.aiOptimization.recommendations.forEach(rec => {
-          const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-          lines.forEach((line: string) => {
-            if (yPos > 280) {
-              pdf.addPage();
-              yPos = 20;
-            }
-            pdf.text(line, 25, yPos);
-            yPos += 5;
-          });
-          yPos += 2;
-        });
-      
+      yPos += 15;
 
-
-      // Priority Content Improvements Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Priority Content Improvements', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text('Strategic improvements recommended by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 10;
-
-      analysis.contentImprovements.forEach((improvement, index) => {
-        if (yPos > 280) {
-          pdf.addPage();
-          yPos = 20;
+      // Detailed Analysis Sections
+      const sections = [
+        {
+          title: 'AI Optimization',
+          data: analysis.aiOptimization,
+          subtitle: 'Optimized for AI search engines by Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Chunkability', analysis.aiOptimization.chunkability],
+            ['Q&A Format', analysis.aiOptimization.qaFormat],
+            ['Entity Recognition', analysis.aiOptimization.entityRecognition],
+            ['Factual Density', analysis.aiOptimization.factualDensity],
+            ['Semantic Clarity', analysis.aiOptimization.semanticClarity]
+          ]
+        },
+        {
+          title: 'Content Quality',
+          data: analysis.contentQuality,
+          subtitle: 'Content optimization powered by Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Long-tail Keywords', analysis.contentQuality.longTailKeywords],
+            ['Comprehensive Coverage', analysis.contentQuality.comprehensiveCoverage],
+            ['Relevance to User Intent', analysis.contentQuality.relevanceToUserIntent],
+            ['Accuracy and Currency', analysis.contentQuality.accuracyAndCurrency],
+            ['Natural Language', analysis.contentQuality.naturalLanguage]
+          ]
+        },
+        {
+          title: 'Technical SEO',
+          data: analysis.technicalSEO,
+          subtitle: 'Technical optimization by Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Heading Structure', analysis.technicalSEO.headingStructure],
+            ['Meta Info', analysis.technicalSEO.metaInfo],
+            ['Alt Text', analysis.technicalSEO.altText],
+            ['Links', analysis.technicalSEO.links]
+          ]
+        },
+        {
+          title: 'Authority & Trust',
+          data: analysis.authority,
+          subtitle: 'Authority building strategies from Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Social Media Presence', analysis.authority.socialMediaPresence],
+            ['Company Information', analysis.authority.companyInformation],
+            ['Legal Compliance', analysis.authority.legalCompliance],
+            ['Testimonials', analysis.authority.testimonials],
+            ['Affiliations', analysis.authority.affiliations]
+          ]
+        },
+        {
+          title: 'User Experience',
+          data: analysis.userExperience,
+          subtitle: 'UX optimization by Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Contact Info', analysis.userExperience.contactInfo],
+            ['Calls to Action', analysis.userExperience.callsToAction],
+            ['Language', analysis.userExperience.language]
+          ]
+        },
+        {
+          title: 'Content Structure',
+          data: analysis.contentStructure,
+          subtitle: 'Content structure optimization by Search Influence - AI SEO Experts',
+          detailedScores: [
+            ['Structured Content', analysis.contentStructure.structuredContent],
+            ['Multimedia', analysis.contentStructure.multimedia],
+            ['Readability', analysis.contentStructure.readability]
+          ]
         }
+      ];
+
+      sections.forEach((section) => {
+        checkPageBreak(80);
+        
+        // Section header
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${section.title} (${section.data.score}%)`, margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text(section.subtitle, margin, yPos);
+        yPos += 8;
+        
+        // Key Findings
         pdf.setFontSize(11);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(`${index + 1}. ${improvement.section}`, 20, yPos);
+        pdf.text('Key Findings:', margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        section.data.findings.forEach(finding => {
+          const lines = pdf.splitTextToSize(`- ${finding}`, contentWidth);
+          lines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+        });
+        
+        // Recommendations
+        yPos += 5;
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Recommendations:', margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        section.data.recommendations.forEach(rec => {
+          const lines = pdf.splitTextToSize(`- ${rec}`, contentWidth);
+          lines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+        });
+        
+        // Detailed Scores
+        yPos += 5;
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Detailed Scores:', margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        section.detailedScores.forEach(([label, score]) => {
+          pdf.text(`- ${label}: ${score}%`, margin + 5, yPos);
+          yPos += 5;
+        });
+        
+        yPos += 10;
+      });
+
+      // Priority Content Improvements
+      if (analysis.contentImprovements.length > 0) {
+        checkPageBreak(40);
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Priority Content Improvements', margin, yPos);
         yPos += 8;
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
-        
-        const currentLines = pdf.splitTextToSize(`Current: ${improvement.current}`, 170);
-        currentLines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
+        pdf.text('Strategic improvements recommended by Search Influence - AI SEO Experts', margin, yPos);
+        yPos += 15;
+
+        analysis.contentImprovements.forEach((improvement, index) => {
+          checkPageBreak(40);
+          
+          pdf.setFontSize(11);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`${index + 1}. ${improvement.section}`, margin, yPos);
+          yPos += 8;
+          
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          
+          const currentLines = pdf.splitTextToSize(`Current: ${improvement.current}`, contentWidth);
+          currentLines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+          
+          const improvedLines = pdf.splitTextToSize(`Improved: ${improvement.improved}`, contentWidth);
+          improvedLines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+          
+          const reasoningLines = pdf.splitTextToSize(`Why this helps: ${improvement.reasoning}`, contentWidth);
+          reasoningLines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 8;
         });
-        yPos += 2;
-        
-        const improvedLines = pdf.splitTextToSize(`Improved: ${improvement.improved}`, 170);
-        improvedLines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-        
-        const reasoningLines = pdf.splitTextToSize(`Why this helps: ${improvement.reasoning}`, 170);
-        reasoningLines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 8;
-      });
+      }
 
-      // Content Quality Section
-      yPos += 10;
-      pdf.setFontSize(12);
+      // Next Steps
+      checkPageBreak(30);
+      pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(`Content Quality (${analysis.contentQuality.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Content optimization powered by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Long-tail Keywords: ${analysis.contentQuality.longTailKeywords}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Comprehensive Coverage: ${analysis.contentQuality.comprehensiveCoverage}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Relevance to User Intent: ${analysis.contentQuality.relevanceToUserIntent}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Accuracy and Currency: ${analysis.contentQuality.accuracyAndCurrency}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Natural Language: ${analysis.contentQuality.naturalLanguage}%`, 25, yPos);
-      yPos += 8;
-
-      // Content Quality Findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.contentQuality.findings.forEach(finding => {
-        const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Content Quality Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.contentQuality.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Technical SEO Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`Technical SEO (${analysis.technicalSEO.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Technical optimization by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Heading Structure: ${analysis.technicalSEO.headingStructure}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Meta Info: ${analysis.technicalSEO.metaInfo}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Alt Text: ${analysis.technicalSEO.altText}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Links: ${analysis.technicalSEO.links}%`, 25, yPos);
-      yPos += 8;
-
-      // Technical SEO Findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.technicalSEO.findings.forEach(finding => {
-        const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Technical SEO Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.technicalSEO.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Authority & Trust Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`Authority & Trust (${analysis.authority.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Authority building strategies from Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Social Media Presence: ${analysis.authority.socialMediaPresence}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Company Information: ${analysis.authority.companyInformation}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Legal Compliance: ${analysis.authority.legalCompliance}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Testimonials: ${analysis.authority.testimonials}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Affiliations: ${analysis.authority.affiliations}%`, 25, yPos);
-      yPos += 8;
-
-      // Authority Findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.authority.findings.forEach(finding => {
-        const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Authority Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.authority.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // User Experience Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`User Experience (${analysis.userExperience.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('UX optimization by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Contact Info: ${analysis.userExperience.contactInfo}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Calls to Action: ${analysis.userExperience.callsToAction}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Language: ${analysis.userExperience.language}%`, 25, yPos);
-      yPos += 8;
-
-      // User Experience Findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.userExperience.findings.forEach(finding => {
-        const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // User Experience Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.userExperience.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Content Structure Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`Content Structure (${analysis.contentStructure.score}%)`, 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'italic');
-      pdf.text('Content structure optimization by Search Influence - AI SEO Experts', 20, yPos);
-      yPos += 8;
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Structured Content: ${analysis.contentStructure.structuredContent}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Multimedia: ${analysis.contentStructure.multimedia}%`, 25, yPos);
-      yPos += 5;
-      pdf.text(`Readability: ${analysis.contentStructure.readability}%`, 25, yPos);
-      yPos += 8;
-
-      // Content Structure Findings
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Key Findings:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.contentStructure.findings.forEach(finding => {
-        const lines = pdf.splitTextToSize(`• ${finding}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Content Structure Recommendations
-      yPos += 5;
-      pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Recommendations:', 20, yPos);
-      yPos += 8;
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      analysis.contentStructure.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, 170);
-        lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
-          yPos += 5;
-        });
-        yPos += 2;
-      });
-
-      // Next Steps Section
-      yPos += 10;
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Next Steps:', 20, yPos);
+      pdf.text('Next Steps', margin, yPos);
       yPos += 8;
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
@@ -775,13 +545,10 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         'Stay Updated - AI search algorithms evolve rapidly; regular audits are recommended'
       ];
       nextSteps.forEach((step, index) => {
-        const lines = pdf.splitTextToSize(`${index + 1}. ${step}`, 170);
+        const lines = pdf.splitTextToSize(`${index + 1}. ${step}`, contentWidth);
         lines.forEach((line: string) => {
-          if (yPos > 280) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(line, 25, yPos);
+          checkPageBreak(5);
+          pdf.text(line, margin + 5, yPos);
           yPos += 5;
         });
         yPos += 2;
@@ -792,13 +559,10 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       const footerText = 'Report generated by AI Website Grader - Optimizing content for the AI-powered search future. Powered by Search Influence - AI SEO Experts.';
-      const footerLines = pdf.splitTextToSize(footerText, 170);
+      const footerLines = pdf.splitTextToSize(footerText, contentWidth);
       footerLines.forEach((line: string) => {
-        if (yPos > 280) {
-          pdf.addPage();
-          yPos = 20;
-        }
-        pdf.text(line, 20, yPos);
+        checkPageBreak(5);
+        pdf.text(line, margin, yPos);
         yPos += 5;
       });
       

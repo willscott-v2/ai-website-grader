@@ -396,50 +396,207 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
       {/* Next Steps */}
       <div style={{ 
         marginTop: '40px',
-        background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)',
-        borderRadius: '12px',
+        background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(52, 152, 219, 0.08) 100%)',
+        borderRadius: '16px',
         padding: '40px',
-        border: '1px solid rgba(52, 152, 219, 0.2)'
+        border: '2px solid rgba(52, 152, 219, 0.3)',
+        boxShadow: '0 8px 32px rgba(52, 152, 219, 0.15)'
       }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--content-text)', margin: '0 0 25px 0' }}>
+        <h2 style={{ 
+          fontSize: '2.2rem', 
+          fontWeight: '800', 
+          color: 'var(--content-text)', 
+          margin: '0 0 30px 0',
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, var(--info-blue) 0%, #2980b9 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
           Next Steps
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-          <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '12px',
+            padding: '30px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            border: '1px solid rgba(52, 152, 219, 0.2)'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.4rem', 
+              fontWeight: '700', 
+              color: 'var(--content-text)', 
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <span style={{
+                background: 'var(--info-blue)',
+                color: 'white',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+                fontWeight: '600'
+              }}>
+                ⚡
+              </span>
               Immediate Actions
             </h3>
             <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>1.</span>
-                Focus on AI Optimization improvements first - this has the highest impact
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--info-blue)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>1.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Focus on AI Optimization improvements first - this has the highest impact
+                </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>2.</span>
-                Implement the priority content improvements listed above
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--info-blue)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>2.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Implement the priority content improvements listed above
+                </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>3.</span>
-                Address technical SEO issues for better search visibility
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--info-blue)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>3.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Address technical SEO issues for better search visibility
+                </span>
               </li>
             </ul>
           </div>
-          <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '12px',
+            padding: '30px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            border: '1px solid rgba(52, 152, 219, 0.2)'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.4rem', 
+              fontWeight: '700', 
+              color: 'var(--content-text)', 
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <span style={{
+                background: 'var(--success-green)',
+                color: 'white',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+                fontWeight: '600'
+              }}>
+                📈
+              </span>
               Long-term Strategy
             </h3>
             <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>1.</span>
-                Monitor your progress with regular re-analysis
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--success-green)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>1.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Monitor your progress with regular re-analysis
+                </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>2.</span>
-                Stay updated with AI search algorithm changes
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--success-green)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>2.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Stay updated with AI search algorithm changes
+                </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
-                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>3.</span>
-                Continuously improve content based on user feedback
+              <li style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                marginBottom: '16px', 
+                fontSize: '1rem', 
+                color: 'var(--content-text)',
+                lineHeight: '1.6'
+              }}>
+                <span style={{ 
+                  color: 'var(--success-green)', 
+                  marginRight: '15px', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem',
+                  minWidth: '25px'
+                }}>3.</span>
+                <span style={{ fontWeight: '500' }}>
+                  Continuously improve content based on user feedback
+                </span>
               </li>
             </ul>
           </div>
