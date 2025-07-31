@@ -43,14 +43,16 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   };
 
   const handlePrint = () => {
-    // Create a print-friendly version of the report
+    // Create a print-friendly version of the report using markdown content
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
       alert('Please allow popups to print the report');
       return;
     }
 
-    const date = new Date(analysis.timestamp).toLocaleDateString();
+    // Import the markdown generation function
+    const { generateMarkdownReport } = require('@/lib/exporters');
+    const markdownContent = generateMarkdownReport(analysis);
     
     const printContent = `
       <!DOCTYPE html>
@@ -59,36 +61,111 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         <title>AI Website Grader Report - ${analysis.title}</title>
         <style>
           body { 
-            font-family: Arial, sans-serif; 
+            font-family: 'Courier New', monospace; 
             line-height: 1.6; 
             margin: 20px; 
             color: #333;
+            font-size: 12px;
           }
-          h1 { color: #2c3e50; border-bottom: 3px solid #e67e22; padding-bottom: 10px; }
-          h2 { color: #34495e; margin-top: 30px; }
-          h3 { color: #2c3e50; margin-top: 20px; }
-          table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-          th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-          th { background-color: #f8f9fa; font-weight: bold; }
-          .score { font-weight: bold; color: #e67e22; }
-          .status { text-transform: capitalize; }
-          .section { margin-bottom: 30px; }
-          .findings, .recommendations { margin: 15px 0; }
-          .detailed-scores { margin: 15px 0; }
-          .detailed-scores ul { list-style: none; padding-left: 0; }
-          .detailed-scores li { margin: 5px 0; }
-          .improvements { margin: 20px 0; }
-          .improvement-item { 
-            border: 1px solid #ddd; 
-            padding: 15px; 
+          h1 { 
+            color: #000; 
+            border-bottom: 2px solid #000; 
+            padding-bottom: 5px; 
+            font-size: 18px;
+            margin-top: 0;
+          }
+          h2 { 
+            color: #000; 
+            margin-top: 20px; 
+            font-size: 16px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+          }
+          h3 { 
+            color: #000; 
+            margin-top: 15px; 
+            font-size: 14px;
+            font-weight: bold;
+          }
+          table { 
+            border-collapse: collapse; 
+            width: 100%; 
             margin: 15px 0; 
-            border-radius: 5px;
+            font-size: 11px;
           }
-          .current { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
-          .improved { background-color: #d4edda; border-left: 4px solid #28a745; padding: 10px; margin: 10px 0; }
-          .reasoning { background-color: #e2e3e5; border-left: 4px solid #6c757d; padding: 10px; margin: 10px 0; }
-          .next-steps { background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; }
-          .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666; }
+          th, td { 
+            border: 1px solid #000; 
+            padding: 8px; 
+            text-align: left; 
+          }
+          th { 
+            background-color: #f0f0f0; 
+            font-weight: bold; 
+          }
+          .score { 
+            font-weight: bold; 
+          }
+          .status { 
+            text-transform: capitalize; 
+          }
+          .section { 
+            margin-bottom: 20px; 
+          }
+          .findings, .recommendations { 
+            margin: 10px 0; 
+          }
+          .detailed-scores { 
+            margin: 10px 0; 
+          }
+          .detailed-scores ul { 
+            list-style: none; 
+            padding-left: 0; 
+          }
+          .detailed-scores li { 
+            margin: 3px 0; 
+          }
+          .improvements { 
+            margin: 15px 0; 
+          }
+          .improvement-item { 
+            border: 1px solid #000; 
+            padding: 10px; 
+            margin: 10px 0; 
+          }
+          .current { 
+            background-color: #fff3cd; 
+            border-left: 3px solid #ffc107; 
+            padding: 8px; 
+            margin: 8px 0; 
+          }
+          .improved { 
+            background-color: #d4edda; 
+            border-left: 3px solid #28a745; 
+            padding: 8px; 
+            margin: 8px 0; 
+          }
+          .reasoning { 
+            background-color: #e2e3e5; 
+            border-left: 3px solid #6c757d; 
+            padding: 8px; 
+            margin: 8px 0; 
+          }
+          .next-steps { 
+            background-color: #d1ecf1; 
+            border: 1px solid #bee5eb; 
+            padding: 10px; 
+          }
+          .footer { 
+            margin-top: 30px; 
+            padding-top: 15px; 
+            border-top: 1px solid #000; 
+            font-size: 10px; 
+            color: #666; 
+          }
+          a {
+            color: #000;
+            text-decoration: underline;
+          }
           @media print {
             body { margin: 0; }
             .no-print { display: none; }
@@ -97,19 +174,19 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       </head>
       <body>
         <h1>AI Website Grader Report</h1>
-        <p><strong>Powered by Search Influence - AI SEO Experts</strong></p>
+        <p><strong>Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</strong></p>
         
         <div class="section">
           <h3>Website Information</h3>
           <p><strong>Website:</strong> ${analysis.url}</p>
           <p><strong>Title:</strong> ${analysis.title}</p>
-          <p><strong>Generated:</strong> ${date}</p>
+          <p><strong>Generated:</strong> ${new Date(analysis.timestamp).toLocaleDateString()}</p>
           <p><strong>Overall Score:</strong> <span class="score">${analysis.overallScore}%</span></p>
         </div>
 
         <div class="section">
           <h2>Executive Summary</h2>
-          <p>This report analyzes your website's readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by Search Influence - AI SEO Experts.</p>
+          <p>This report analyzes your website's readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
         </div>
 
         <div class="section">
@@ -159,7 +236,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>AI Optimization (${analysis.aiOptimization.score}%)</h2>
-          <p><em>Optimized for AI search engines by Search Influence - AI SEO Experts</em></p>
+          <p><em>Optimized for AI search engines by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -189,7 +266,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>Content Quality (${analysis.contentQuality.score}%)</h2>
-          <p><em>Content optimization powered by Search Influence - AI SEO Experts</em></p>
+          <p><em>Content optimization powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -219,7 +296,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>Technical SEO (${analysis.technicalSEO.score}%)</h2>
-          <p><em>Technical optimization by Search Influence - AI SEO Experts</em></p>
+          <p><em>Technical optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -248,7 +325,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>Authority & Trust (${analysis.authority.score}%)</h2>
-          <p><em>Authority building strategies from Search Influence - AI SEO Experts</em></p>
+          <p><em>Authority building strategies from <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -278,7 +355,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>User Experience (${analysis.userExperience.score}%)</h2>
-          <p><em>UX optimization by Search Influence - AI SEO Experts</em></p>
+          <p><em>UX optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -306,7 +383,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <div class="section">
           <h2>Content Structure (${analysis.contentStructure.score}%)</h2>
-          <p><em>Content structure optimization by Search Influence - AI SEO Experts</em></p>
+          <p><em>Content structure optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -335,7 +412,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         ${analysis.contentImprovements.length > 0 ? `
         <div class="section">
           <h2>Priority Content Improvements</h2>
-          <p><em>Strategic improvements recommended by Search Influence - AI SEO Experts</em></p>
+          <p><em>Strategic improvements recommended by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
           
           ${analysis.contentImprovements.map((improvement, index) => `
             <div class="improvement-item">
@@ -367,7 +444,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         </div>
 
         <div class="footer">
-          <p>Report generated by AI Website Grader - Optimizing content for the AI-powered search future. Powered by Search Influence - AI SEO Experts.</p>
+          <p>Report generated by <a href="https://ai-grader.searchinfluence.com/">AI Website Grader</a> - Optimizing content for the AI-powered search future. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
         </div>
       </body>
       </html>
