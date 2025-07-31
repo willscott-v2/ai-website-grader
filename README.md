@@ -1,8 +1,13 @@
 # AI Website Grader - Search Influence
 
-A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 14, TypeScript, and Tailwind CSS.
+A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 15, TypeScript, and Tailwind CSS.
 
 **Powered by Search Influence** - AI-Driven SEO Experts for Higher Education and Healthcare.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ## 🚀 Features
 
@@ -53,7 +58,7 @@ A comprehensive web application that analyzes websites for their readiness in AI
 
 ## 🛠️ Technology Stack
 
-- **Framework**: Next.js 14 with App Router
+- **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
@@ -65,7 +70,7 @@ A comprehensive web application that analyzes websites for their readiness in AI
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/willscott-v2/ai-website-grader.git
 cd ai-website-grader
 ```
 
@@ -81,6 +86,12 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## ⚡ Quick Start
+
+Want to try it immediately? Click the button below to deploy your own instance:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/willscott-v2/ai-website-grader)
+
 ## 🏗️ Project Structure
 
 ```
@@ -90,6 +101,7 @@ ai-website-grader/
 │   │   └── route.ts          # API endpoint for analysis
 │   ├── globals.css           # Global styles
 │   ├── layout.tsx            # Root layout
+│   ├── not-found.tsx         # 404 page
 │   └── page.tsx              # Main application page
 ├── components/
 │   ├── URLAnalyzer.tsx       # Main input component
@@ -98,6 +110,16 @@ ai-website-grader/
 │   └── ExportButtons.tsx     # Export functionality
 ├── lib/
 │   ├── analysis-engine.ts    # Main analysis orchestration
+│   ├── analyzer.ts           # Core analysis functions
+│   ├── crawler.ts            # Website crawling logic
+│   ├── exporters.ts          # PDF/Markdown export
+│   └── utils.ts              # Utility functions
+├── types/
+│   └── index.ts              # TypeScript definitions
+├── public/                   # Static assets
+├── vercel.json               # Vercel deployment config
+└── DEPLOYMENT.md             # Deployment guide
+```
 │   ├── analyzer.ts           # Core analysis functions
 │   ├── crawler.ts            # Website crawling logic
 │   ├── exporters.ts          # PDF/Markdown export
@@ -149,10 +171,14 @@ The scoring system uses weighted calculations with AI Optimization receiving the
 
 ## 🚀 Deployment
 
+### Live Demo
+🌐 **Live Application**: [Deploy to Vercel](https://vercel.com/new/clone?repository-url=https://github.com/willscott-v2/ai-website-grader)
+
 ### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically
+1. Click the "Deploy to Vercel" button above, or
+2. Push your code to GitHub
+3. Connect your repository to Vercel
+4. Deploy automatically
 
 ### Other Platforms
 The application is built with Next.js and can be deployed to any platform that supports Node.js applications.
