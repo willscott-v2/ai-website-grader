@@ -196,6 +196,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
     pdf.text('Powered by Search Influence - AI SEO Experts', margin, yPos);
+    // Add clickable link for Search Influence
+    pdf.link(margin, yPos - 4, 60, 6, { url: 'https://www.searchinfluence.com/' });
     yPos += 15;
     
     // Website Information
@@ -208,6 +210,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
     pdf.text(`Website: ${analysis.url}`, margin + 5, yPos);
+    // Add clickable link for the analyzed website
+    pdf.link(margin + 5, yPos - 4, 50, 6, { url: analysis.url });
     yPos += 6;
     pdf.text(`Title: ${analysis.title}`, margin + 5, yPos);
     yPos += 6;
@@ -231,6 +235,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
       pdf.text(line, margin, yPos);
       yPos += 5;
     });
+    // Add clickable link for Search Influence in summary
+    pdf.link(margin + 120, yPos - 15, 60, 6, { url: 'https://www.searchinfluence.com/' });
     yPos += 10;
     
     // Score Breakdown
@@ -360,6 +366,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'italic');
       pdf.text(section.subtitle, margin, yPos);
+      // Add clickable link for Search Influence in section subtitle
+      pdf.link(margin, yPos - 4, 60, 6, { url: 'https://www.searchinfluence.com/' });
       yPos += 8;
       
       // Key Findings
@@ -501,6 +509,10 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
       yPos += 5;
     });
     
+    // Add clickable links in footer
+    pdf.link(margin + 120, yPos - 15, 60, 6, { url: 'https://www.searchinfluence.com/' });
+    pdf.link(margin + 15, yPos - 15, 40, 6, { url: 'https://ai-grader.searchinfluence.com/' });
+
     // Add metadata
     pdf.setProperties({
       title: `AI Website Grader Report - ${analysis.title}`,
