@@ -158,7 +158,7 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
   const loadTime = estimateLoadTime(html, images.length);
   
   // Generate markdown content
-  const markdownContent = generateMarkdownContent($, title, headings, paragraphs);
+  const markdownContent = generateMarkdownContent($, title);
   
   // Analyze UX information
   const uxInfo = analyzeUXInfo($, html);
@@ -347,9 +347,7 @@ function normalizeUrl(url: string): string {
 
 function generateMarkdownContent(
   $: cheerio.CheerioAPI, 
-  title: string, 
-  headings: { level: number; text: string }[], 
-  paragraphs: string[]
+  title: string
 ): string {
   let markdown = `# ${title}\n\n`;
   
@@ -362,7 +360,7 @@ function generateMarkdownContent(
   
   contentArea.find('h1, h2, h3, h4, h5, h6, p').each((_, element) => {
     const $el = $(element);
-    const tagName = element.tagName.toLowerCase();
+    const tagName = $el.prop('tagName')?.toLowerCase() || '';
     const text = $el.text().trim();
     
     if (text) {
