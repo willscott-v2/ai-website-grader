@@ -17,10 +17,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
   };
 
   const getOverallScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-blue-600';
-    if (score >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'var(--success-green)';
+    if (score >= 60) return 'var(--info-blue)';
+    if (score >= 40) return 'var(--orange-accent)';
+    return 'var(--error-red)';
   };
 
   const getOverallScoreStatus = (score: number) => {
@@ -33,101 +33,187 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
   return (
     <div className="max-w-6xl mx-auto" id="report-container">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                AI Website Grader Report
-              </h1>
-              <p className="text-sm text-blue-600 font-medium">Search Influence</p>
-            </div>
+      <div className="results">
+        <div className="results-header">
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 10px 0', color: 'var(--white)' }}>
+              AI Website Grader Report
+            </h1>
+            <p style={{ fontSize: '1rem', color: 'var(--white)', margin: 0 }}>
+              Powered by Search Influence - AI SEO Experts
+            </p>
           </div>
-          <p className="text-gray-600">
+          <p style={{ textAlign: 'center', margin: 0, opacity: 0.9 }}>
             Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}
           </p>
         </div>
 
-        {/* Website Info */}
-        <div className="bg-gray-50 rounded-lg p-6 mb-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Website Information</h3>
-              <p className="text-gray-600">
-                <span className="font-medium">URL:</span> {analysis.url}
-              </p>
-              <p className="text-gray-600">
-                <span className="font-medium">Title:</span> {analysis.title}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="inline-block">
-                <div className={`text-4xl font-bold ${getOverallScoreColor(analysis.overallScore)}`}>
+        <div className="content-area">
+          {/* Website Info */}
+          <div style={{ 
+            background: 'var(--background-gray)', 
+            borderRadius: '12px', 
+            padding: '30px', 
+            marginBottom: '30px' 
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '30px', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+                  Website Information
+                </h3>
+                <p style={{ color: 'var(--secondary-content)', margin: '5px 0' }}>
+                  <span style={{ fontWeight: '600' }}>URL:</span> {analysis.url}
+                </p>
+                <p style={{ color: 'var(--secondary-content)', margin: '5px 0' }}>
+                  <span style={{ fontWeight: '600' }}>Title:</span> {analysis.title}
+                </p>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ 
+                  fontSize: '3rem', 
+                  fontWeight: '800', 
+                  color: getOverallScoreColor(analysis.overallScore),
+                  marginBottom: '5px'
+                }}>
                   {analysis.overallScore}%
                 </div>
-                <div className="text-sm text-gray-500 capitalize">
+                <div style={{ 
+                  fontSize: '0.9rem', 
+                  color: 'var(--muted-text)', 
+                  textTransform: 'capitalize' 
+                }}>
                   {getOverallScoreStatus(analysis.overallScore).replace('-', ' ')}
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Score Summary */}
-        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-          <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{analysis.aiOptimization.score}%</div>
-            <div className="text-sm text-blue-700 font-medium">AI Optimization</div>
-            <div className="text-xs text-blue-600 capitalize mt-1">
-              {analysis.aiOptimization.status.replace('-', ' ')}
+          {/* Score Summary */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+            gap: '20px', 
+            marginBottom: '40px' 
+          }}>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(52, 152, 219, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '5px' }}>
+                {analysis.aiOptimization.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                AI Optimization
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.aiOptimization.status.replace('-', ' ')}
+              </div>
+            </div>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(39, 174, 96, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '5px' }}>
+                {analysis.contentQuality.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Content Quality
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.contentQuality.status.replace('-', ' ')}
+              </div>
+            </div>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(230, 126, 34, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '5px' }}>
+                {analysis.technicalSEO.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Technical SEO
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.technicalSEO.status.replace('-', ' ')}
+              </div>
+            </div>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(155, 89, 182, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#9b59b6', marginBottom: '5px' }}>
+                {analysis.authority.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Authority
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.authority.status.replace('-', ' ')}
+              </div>
+            </div>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(231, 76, 60, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--error-red)', marginBottom: '5px' }}>
+                {analysis.userExperience.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                User Experience
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.userExperience.status.replace('-', ' ')}
+              </div>
+            </div>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(26, 188, 156, 0.2)'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1abc9c', marginBottom: '5px' }}>
+                {analysis.contentStructure.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Content Structure
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
+                {analysis.contentStructure.status.replace('-', ' ')}
+              </div>
             </div>
           </div>
-          <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{analysis.contentQuality.score}%</div>
-            <div className="text-sm text-green-700 font-medium">Content Quality</div>
-            <div className="text-xs text-green-600 capitalize mt-1">
-              {analysis.contentQuality.status.replace('-', ' ')}
-            </div>
-          </div>
-          <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{analysis.technicalSEO.score}%</div>
-            <div className="text-sm text-purple-700 font-medium">Technical SEO</div>
-            <div className="text-xs text-purple-600 capitalize mt-1">
-              {analysis.technicalSEO.status.replace('-', ' ')}
-            </div>
-          </div>
-          <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600">{analysis.authority.score}%</div>
-            <div className="text-sm text-orange-700 font-medium">Authority</div>
-            <div className="text-xs text-orange-600 capitalize mt-1">
-              {analysis.authority.status.replace('-', ' ')}
-            </div>
-          </div>
-          <div className="text-center p-4 bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg">
-            <div className="text-2xl font-bold text-pink-600">{analysis.userExperience.score}%</div>
-            <div className="text-sm text-pink-700 font-medium">User Experience</div>
-            <div className="text-xs text-pink-600 capitalize mt-1">
-              {analysis.userExperience.status.replace('-', ' ')}
-            </div>
-          </div>
-          <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg">
-            <div className="text-2xl font-bold text-teal-600">{analysis.contentStructure.score}%</div>
-            <div className="text-sm text-teal-700 font-medium">Content Structure</div>
-            <div className="text-xs text-teal-600 capitalize mt-1">
-              {analysis.contentStructure.status.replace('-', ' ')}
-            </div>
-          </div>
-        </div>
 
-        {/* Export Buttons */}
-        <ExportButtons 
-          analysis={analysis} 
-          onExportMarkdown={handleExportMarkdown}
-        />
+          {/* Export Buttons */}
+          <ExportButtons 
+            analysis={analysis} 
+            onExportMarkdown={handleExportMarkdown}
+          />
+        </div>
       </div>
 
       {/* Detailed Analysis */}
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+        gap: '30px',
+        marginTop: '40px'
+      }}>
         {/* AI Optimization */}
         <ScoreCard
           title="AI Optimization"
@@ -222,34 +308,84 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
 
       {/* Content Improvements */}
       {analysis.contentImprovements.length > 0 && (
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Priority Content Improvements</h2>
-          <div className="space-y-6">
+        <div style={{ 
+          marginTop: '40px',
+          background: 'var(--content-bg)',
+          borderRadius: '12px',
+          padding: '40px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+        }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--content-text)', margin: '0 0 30px 0' }}>
+            Priority Content Improvements
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
             {analysis.contentImprovements.map((improvement, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+              <div key={index} style={{ 
+                border: '1px solid var(--border-gray)', 
+                borderRadius: '12px', 
+                padding: '25px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <div style={{ 
+                    width: '32px', 
+                    height: '32px', 
+                    background: 'var(--orange-accent)', 
+                    color: 'var(--white)', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontWeight: '700', 
+                    fontSize: '0.9rem',
+                    marginRight: '15px'
+                  }}>
                     {index + 1}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{improvement.section}</h3>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: 0 }}>
+                    {improvement.section}
+                  </h3>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Current Issue:</h4>
-                    <p className="text-sm text-gray-600 bg-red-50 p-3 rounded border-l-4 border-red-400">
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 10px 0' }}>
+                      Current Issue:
+                    </h4>
+                    <p style={{ 
+                      fontSize: '0.9rem', 
+                      color: 'var(--content-text)', 
+                      background: 'rgba(231, 76, 60, 0.1)', 
+                      padding: '15px', 
+                      borderRadius: '8px', 
+                      borderLeft: '4px solid var(--error-red)',
+                      margin: 0
+                    }}>
                       {improvement.current}
                     </p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Recommended Action:</h4>
-                    <p className="text-sm text-gray-600 bg-green-50 p-3 rounded border-l-4 border-green-400">
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 10px 0' }}>
+                      Recommended Action:
+                    </h4>
+                    <p style={{ 
+                      fontSize: '0.9rem', 
+                      color: 'var(--content-text)', 
+                      background: 'rgba(39, 174, 96, 0.1)', 
+                      padding: '15px', 
+                      borderRadius: '8px', 
+                      borderLeft: '4px solid var(--success-green)',
+                      margin: 0
+                    }}>
                       {improvement.improved}
                     </p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Why This Helps:</h4>
-                  <p className="text-sm text-gray-600">{improvement.reasoning}</p>
+                <div style={{ marginTop: '20px' }}>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 10px 0' }}>
+                    Why This Helps:
+                  </h4>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--secondary-content)', margin: 0 }}>
+                    {improvement.reasoning}
+                  </p>
                 </div>
               </div>
             ))}
@@ -258,39 +394,51 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
       )}
 
       {/* Next Steps */}
-      <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Next Steps</h2>
-        <div className="grid md:grid-cols-2 gap-6">
+      <div style={{ 
+        marginTop: '40px',
+        background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)',
+        borderRadius: '12px',
+        padding: '40px',
+        border: '1px solid rgba(52, 152, 219, 0.2)'
+      }}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--content-text)', margin: '0 0 25px 0' }}>
+          Next Steps
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Immediate Actions</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">1.</span>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+              Immediate Actions
+            </h3>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>1.</span>
                 Focus on AI Optimization improvements first - this has the highest impact
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">2.</span>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>2.</span>
                 Implement the priority content improvements listed above
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">3.</span>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>3.</span>
                 Address technical SEO issues for better search visibility
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Long-term Strategy</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">1.</span>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+              Long-term Strategy
+            </h3>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>1.</span>
                 Monitor your progress with regular re-analysis
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">2.</span>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>2.</span>
                 Stay updated with AI search algorithm changes
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-500 mr-2">3.</span>
+              <li style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--secondary-content)' }}>
+                <span style={{ color: 'var(--info-blue)', marginRight: '10px', fontWeight: '600' }}>3.</span>
                 Continuously improve content based on user feedback
               </li>
             </ul>

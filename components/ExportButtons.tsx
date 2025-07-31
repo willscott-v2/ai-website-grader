@@ -43,33 +43,107 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   };
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div style={{ 
+      display: 'flex', 
+      flexWrap: 'wrap', 
+      gap: '12px',
+      marginTop: '20px'
+    }}>
       <button
         onClick={handleExportPDF}
         disabled={isExportingPDF}
-        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '12px 20px',
+          background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+          color: 'var(--white)',
+          borderRadius: '8px',
+          border: 'none',
+          cursor: isExportingPDF ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 2px 8px rgba(230, 126, 34, 0.3)',
+          opacity: isExportingPDF ? 0.6 : 1,
+          fontSize: '14px',
+          fontWeight: '600',
+          fontFamily: 'var(--font-stack)'
+        }}
+        onMouseEnter={(e) => {
+          if (!isExportingPDF) {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.4)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(230, 126, 34, 0.3)';
+        }}
       >
         {isExportingPDF ? (
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          <Loader2 size={16} style={{ marginRight: '8px' }} />
         ) : (
-          <FileDown className="w-4 h-4 mr-2" />
+          <FileDown size={16} style={{ marginRight: '8px' }} />
         )}
         {isExportingPDF ? 'Generating PDF...' : 'Export PDF'}
       </button>
 
       <button
         onClick={onExportMarkdown}
-        className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors shadow-md hover:shadow-lg"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '12px 20px',
+          background: 'linear-gradient(135deg, var(--info-blue) 0%, #2980b9 100%)',
+          color: 'var(--white)',
+          borderRadius: '8px',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
+          fontSize: '14px',
+          fontWeight: '600',
+          fontFamily: 'var(--font-stack)'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 15px rgba(52, 152, 219, 0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(52, 152, 219, 0.3)';
+        }}
       >
-        <FileText className="w-4 h-4 mr-2" />
+        <FileText size={16} style={{ marginRight: '8px' }} />
         Export Markdown
       </button>
 
       <button
         onClick={() => window.print()}
-        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors shadow-md hover:shadow-lg"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '12px 20px',
+          background: 'linear-gradient(135deg, var(--success-green) 0%, #229954 100%)',
+          color: 'var(--white)',
+          borderRadius: '8px',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 2px 8px rgba(39, 174, 96, 0.3)',
+          fontSize: '14px',
+          fontWeight: '600',
+          fontFamily: 'var(--font-stack)'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 15px rgba(39, 174, 96, 0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(39, 174, 96, 0.3)';
+        }}
       >
-        <Download className="w-4 h-4 mr-2" />
+        <Download size={16} style={{ marginRight: '8px' }} />
         Print Report
       </button>
     </div>

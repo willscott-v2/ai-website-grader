@@ -23,71 +23,105 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Search Influence branding */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                <img src="/search-influence-logo.png" alt="Search Influence" className="h-8 w-auto" />
-              </a>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">AI Website Grader</h1>
+    <div className="min-h-screen">
+      {/* Header with GetChunks Design */}
+      <header className="header">
+        <div className="container">
+          <div className="header-content">
+            <div className="logo-section">
+              <div className="logo-container">
+                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+                  <img src="/search-influence-logo.png" alt="Search Influence" className="si-logo" />
+                </a>
               </div>
+              <h1>AI Website Grader</h1>
+              <div className="tagline">Optimize for AI-Powered Search</div>
             </div>
-            <div className="text-sm text-gray-500">
-              Powered by AI-Driven SEO
+            <div className="header-description">
+              <p>
+                Analyze your website's readiness for AI-powered search engines, 
+                chat interfaces, and modern search algorithms. Get actionable insights 
+                to improve your visibility in AI overviews, voice search results, 
+                and chatbot responses.
+              </p>
+              <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--orange-accent)' }}>
+                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'underline' }}>
+                  Powered by Search Influence - AI SEO Experts
+                </a>
+              </p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        {!analysis ? (
-          <URLAnalyzer
-            onAnalysisComplete={handleAnalysisComplete}
-            onAnalysisStart={handleAnalysisStart}
-            isLoading={isLoading}
-          />
-        ) : (
-          <div>
-            {/* Back Button */}
-            <div className="mb-6">
+      <div className="main-section">
+        <div className="container">
+          {!analysis ? (
+            <URLAnalyzer
+              onAnalysisComplete={handleAnalysisComplete}
+              onAnalysisStart={handleAnalysisStart}
+              isLoading={isLoading}
+            />
+          ) : (
+            <div>
+              {/* Back Button */}
               <button
                 onClick={handleNewAnalysis}
-                className="flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                className="back-btn"
               >
-                ← Back to Analysis
+                Back to Analysis
               </button>
+              
+              {/* Report */}
+              <ScoreReport analysis={analysis} />
             </div>
-            
-            {/* Report */}
-            <ScoreReport analysis={analysis} />
+          )}
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="features">
+        <div className="container">
+          <div className="feature">
+            <div className="feature-icon">🎯</div>
+            <h3>AI Optimization Focus</h3>
+            <p>Content chunkability for AI processing, Q&A format optimization, entity recognition, and semantic structure analysis.</p>
           </div>
-        )}
+          <div className="feature">
+            <div className="feature-icon">⚡</div>
+            <h3>Comprehensive Analysis</h3>
+            <p>Technical SEO fundamentals, content quality assessment, authority and trust signals, and user engagement factors.</p>
+          </div>
+          <div className="feature">
+            <div className="feature-icon">📊</div>
+            <h3>Actionable Insights</h3>
+            <p>Detailed scoring across 6 key categories with specific recommendations to improve your AI search visibility.</p>
+          </div>
+        </div>
       </div>
 
       {/* Footer with Search Influence branding */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
-        <div className="container mx-auto px-4 py-8">
+      <footer className="footer">
+        <div className="container">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                <img src="/search-influence-logo.png" alt="Search Influence" className="h-8 w-auto mr-3" />
-              </a>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+              <div className="logo-container" style={{ margin: '0 15px 0 0' }}>
+                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+                  <img src="/search-influence-logo.png" alt="Search Influence" className="si-logo" />
+                </a>
+              </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Search Influence</h3>
-                <p className="text-sm text-gray-500">AI SEO Experts</p>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--white)', margin: '0 0 5px 0' }}>Search Influence</h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--medium-gray)', margin: 0 }}>AI SEO Experts</p>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p style={{ fontSize: '0.9rem', color: 'var(--dark-gray)', margin: '0 0 20px 0', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
               Helping higher education institutions and healthcare organizations 
-              increase visibility and drive measurable growth.
+              increase visibility and drive measurable growth through AI-powered SEO strategies.
             </p>
-            <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', fontSize: '0.8rem', color: 'var(--dark-gray)' }}>
               <span>•</span>
-              <a href="https://www.searchinfluence.com" className="text-blue-600 hover:text-blue-700">
+              <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
                 Visit Search Influence
               </a>
               <span>•</span>

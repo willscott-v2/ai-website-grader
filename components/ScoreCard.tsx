@@ -20,65 +20,104 @@ export default function ScoreCard({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'excellent':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return { bg: 'rgba(39, 174, 96, 0.1)', border: 'rgba(39, 174, 96, 0.3)', text: 'var(--success-green)' };
       case 'good':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return { bg: 'rgba(52, 152, 219, 0.1)', border: 'rgba(52, 152, 219, 0.3)', text: 'var(--info-blue)' };
       case 'needs-improvement':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        return { bg: 'rgba(230, 126, 34, 0.1)', border: 'rgba(230, 126, 34, 0.3)', text: 'var(--orange-accent)' };
       case 'poor':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return { bg: 'rgba(231, 76, 60, 0.1)', border: 'rgba(231, 76, 60, 0.3)', text: 'var(--error-red)' };
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return { bg: 'rgba(149, 165, 166, 0.1)', border: 'rgba(149, 165, 166, 0.3)', text: 'var(--dark-gray)' };
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'excellent':
-        return <CheckCircle className="w-5 h-5" />;
+        return <CheckCircle size={18} />;
       case 'good':
-        return <CheckCircle className="w-5 h-5" />;
+        return <CheckCircle size={18} />;
       case 'needs-improvement':
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle size={18} />;
       case 'poor':
-        return <XCircle className="w-5 h-5" />;
+        return <XCircle size={18} />;
       default:
-        return <Info className="w-5 h-5" />;
+        return <Info size={18} />;
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-blue-600';
-    if (score >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'var(--success-green)';
+    if (score >= 60) return 'var(--info-blue)';
+    if (score >= 40) return 'var(--orange-accent)';
+    return 'var(--error-red)';
   };
 
+  const statusColors = getStatusColor(status);
+
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+    <div style={{ 
+      background: 'var(--content-bg)', 
+      borderRadius: '12px', 
+      boxShadow: '0 4px 15px rgba(0,0,0,0.1)', 
+      border: '1px solid var(--border-gray)', 
+      overflow: 'hidden',
+      transition: 'all 0.3s ease'
+    }}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <div className={`flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(status)}`}>
+      <div style={{ 
+        padding: '25px', 
+        borderBottom: '1px solid var(--border-gray)',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--content-text)', margin: 0 }}>
+            {title}
+          </h3>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            padding: '8px 12px', 
+            borderRadius: '20px', 
+            fontSize: '0.8rem', 
+            fontWeight: '500', 
+            border: `1px solid ${statusColors.border}`,
+            background: statusColors.bg,
+            color: statusColors.text
+          }}>
             {getStatusIcon(status)}
-            <span className="ml-1 capitalize">{status.replace('-', ' ')}</span>
+            <span style={{ marginLeft: '6px', textTransform: 'capitalize' }}>
+              {status.replace('-', ' ')}
+            </span>
           </div>
         </div>
-        <div className="mt-2">
-          <div className="flex items-center">
-            <span className={`text-3xl font-bold ${getScoreColor(score)}`}>
+        <div style={{ marginTop: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: '800', 
+              color: getScoreColor(score),
+              marginRight: '20px'
+            }}>
               {score}%
             </span>
-            <div className="ml-4 flex-1">
-              <div className="w-full bg-gray-200 rounded-full h-2">
+            <div style={{ flex: 1 }}>
+              <div style={{ 
+                width: '100%', 
+                background: 'var(--border-gray)', 
+                borderRadius: '10px', 
+                height: '8px',
+                overflow: 'hidden'
+              }}>
                 <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    score >= 80 ? 'bg-green-500' : 
-                    score >= 60 ? 'bg-blue-500' : 
-                    score >= 40 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`}
-                  style={{ width: `${score}%` }}
+                  style={{ 
+                    height: '8px', 
+                    borderRadius: '10px', 
+                    background: getScoreColor(score),
+                    transition: 'all 0.3s ease',
+                    width: `${score}%`
+                  }}
                 />
               </div>
             </div>
@@ -87,15 +126,29 @@ export default function ScoreCard({
       </div>
 
       {/* Content */}
-      <div className="px-6 py-4">
+      <div style={{ padding: '25px' }}>
         {/* Findings */}
         {findings.length > 0 && (
-          <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Key Findings:</h4>
-            <ul className="space-y-1">
+          <div style={{ marginBottom: '25px' }}>
+            <h4 style={{ 
+              fontSize: '0.9rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
+              margin: '0 0 12px 0' 
+            }}>
+              Key Findings:
+            </h4>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
               {findings.map((finding, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-start">
-                  <span className="text-red-500 mr-2">•</span>
+                <li key={index} style={{ 
+                  fontSize: '0.85rem', 
+                  color: 'var(--secondary-content)', 
+                  display: 'flex', 
+                  alignItems: 'flex-start',
+                  marginBottom: '8px',
+                  lineHeight: '1.5'
+                }}>
+                  <span style={{ color: 'var(--error-red)', marginRight: '8px', marginTop: '2px' }}>•</span>
                   {finding}
                 </li>
               ))}
@@ -105,12 +158,26 @@ export default function ScoreCard({
 
         {/* Recommendations */}
         {recommendations.length > 0 && (
-          <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Recommendations:</h4>
-            <ul className="space-y-1">
+          <div style={{ marginBottom: '25px' }}>
+            <h4 style={{ 
+              fontSize: '0.9rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
+              margin: '0 0 12px 0' 
+            }}>
+              Recommendations:
+            </h4>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
               {recommendations.map((recommendation, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-start">
-                  <span className="text-green-500 mr-2">•</span>
+                <li key={index} style={{ 
+                  fontSize: '0.85rem', 
+                  color: 'var(--secondary-content)', 
+                  display: 'flex', 
+                  alignItems: 'flex-start',
+                  marginBottom: '8px',
+                  lineHeight: '1.5'
+                }}>
+                  <span style={{ color: 'var(--success-green)', marginRight: '8px', marginTop: '2px' }}>•</span>
                   {recommendation}
                 </li>
               ))}
@@ -121,14 +188,37 @@ export default function ScoreCard({
         {/* Detailed Scores */}
         {details && Object.keys(details).length > 0 && (
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Detailed Scores:</h4>
-            <div className="grid grid-cols-2 gap-2">
+            <h4 style={{ 
+              fontSize: '0.9rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
+              margin: '0 0 12px 0' 
+            }}>
+              Detailed Scores:
+            </h4>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
+              gap: '8px' 
+            }}>
               {Object.entries(details).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm">
-                  <span className="text-gray-600 capitalize">
+                <div key={key} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  fontSize: '0.8rem',
+                  padding: '6px 0'
+                }}>
+                  <span style={{ 
+                    color: 'var(--secondary-content)', 
+                    textTransform: 'capitalize',
+                    fontWeight: '500'
+                  }}>
                     {key.replace(/([A-Z])/g, ' $1').trim()}:
                   </span>
-                  <span className={`font-medium ${getScoreColor(value)}`}>
+                  <span style={{ 
+                    fontWeight: '600', 
+                    color: getScoreColor(value) 
+                  }}>
                     {value}%
                   </span>
                 </div>
