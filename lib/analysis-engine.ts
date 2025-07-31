@@ -6,7 +6,10 @@ import {
   analyzeAIOptimization, 
   analyzeAuthority, 
   analyzeUserExperience,
-  analyzeContentStructure
+  analyzeContentStructure,
+  analyzeTechnicalCrawlability,
+  analyzeMobileOptimization,
+  analyzeSchemaAnalysis
 } from './analyzer';
 
 export async function analyzeWebsite(url: string, textContent?: string): Promise<WebsiteAnalysis> {
@@ -40,8 +43,11 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   
   // Run all analyses
   const technicalSEO = analyzeTechnicalSEO(content);
+  const technicalCrawlability = analyzeTechnicalCrawlability(content);
   const contentQuality = analyzeContentQuality(content);
   const aiOptimization = analyzeAIOptimization(content);
+  const mobileOptimization = analyzeMobileOptimization(content);
+  const schemaAnalysis = analyzeSchemaAnalysis(content);
   const authority = analyzeAuthority(content);
   const userExperience = analyzeUserExperience(content);
   const contentStructure = analyzeContentStructure(content);
@@ -49,8 +55,11 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   // Calculate weighted overall score
   const overallScore = calculateOverallScore({
     technicalSEO: technicalSEO.score,
+    technicalCrawlability: technicalCrawlability.score,
     contentQuality: contentQuality.score,
     aiOptimization: aiOptimization.score,
+    mobileOptimization: mobileOptimization.score,
+    schemaAnalysis: schemaAnalysis.score,
     authority: authority.score,
     userExperience: userExperience.score,
     contentStructure: contentStructure.score
@@ -63,8 +72,11 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     overallScore,
     timestamp: new Date().toISOString(),
     technicalSEO,
+    technicalCrawlability,
     contentQuality,
     aiOptimization,
+    mobileOptimization,
+    schemaAnalysis,
     authority,
     userExperience,
     contentStructure,
@@ -77,8 +89,11 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     overallScore,
     timestamp: new Date().toISOString(),
     technicalSEO,
+    technicalCrawlability,
     contentQuality,
     aiOptimization,
+    mobileOptimization,
+    schemaAnalysis,
     authority,
     userExperience,
     contentStructure,
@@ -88,29 +103,38 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
 
 export function calculateOverallScore(scores: {
   technicalSEO: number;
+  technicalCrawlability: number;
   contentQuality: number;
   aiOptimization: number;
+  mobileOptimization: number;
+  schemaAnalysis: number;
   authority: number;
   userExperience: number;
   contentStructure: number;
 }): number {
-  // Weighted scoring - AI optimization is most important
+  // Weighted scoring - AI optimization, mobile, and crawlability are most important
   const weights = {
-    aiOptimization: 0.25,      // 25% - Most important for AI search
-    contentQuality: 0.20,      // 20% - Quality content is crucial
-    technicalSEO: 0.20,        // 20% - Technical foundation
-    authority: 0.15,           // 15% - Trust and credibility
-    userExperience: 0.10,      // 10% - User experience
-    contentStructure: 0.10     // 10% - Content structure
+    aiOptimization: 0.22,           // 22% - Most important for AI search content
+    mobileOptimization: 0.18,       // 18% - Critical for modern SEO (mobile-first indexing)
+    technicalCrawlability: 0.16,   // 16% - Critical for AI bot access (Scrunch-style)
+    schemaAnalysis: 0.14,          // 14% - Important for rich results and AI understanding
+    contentQuality: 0.12,          // 12% - Quality content is crucial
+    technicalSEO: 0.10,            // 10% - Technical foundation
+    authority: 0.05,               // 5% - Trust and credibility
+    contentStructure: 0.02,        // 2% - Content structure
+    userExperience: 0.01           // 1% - User experience (least critical for AI)
   };
   
   const weightedScore = 
     scores.aiOptimization * weights.aiOptimization +
+    scores.mobileOptimization * weights.mobileOptimization +
+    scores.technicalCrawlability * weights.technicalCrawlability +
+    scores.schemaAnalysis * weights.schemaAnalysis +
     scores.contentQuality * weights.contentQuality +
     scores.technicalSEO * weights.technicalSEO +
     scores.authority * weights.authority +
-    scores.userExperience * weights.userExperience +
-    scores.contentStructure * weights.contentStructure;
+    scores.contentStructure * weights.contentStructure +
+    scores.userExperience * weights.userExperience;
   
   return Math.round(weightedScore);
 }
@@ -177,6 +201,66 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
           current: 'Images missing alt text',
           improved: 'Add descriptive alt text to all images. Include relevant keywords naturally and describe the image content for accessibility.',
           reasoning: 'Alt text helps search engines understand image content and improves accessibility for users with screen readers.'
+        }
+      ]
+    },
+    'Technical Crawlability': {
+      lowScore: (score: number) => score < 70,
+      improvements: [
+        {
+          current: 'Robots.txt may be blocking AI crawlers',
+          improved: 'Ensure robots.txt allows AI crawlers like GPTBot, ChatGPT-User, and CCBot. Add specific allow rules for AI user agents.',
+          reasoning: 'Proper robots.txt configuration ensures AI crawlers can access and index your content for AI search results.'
+        },
+        {
+          current: 'Content not optimized for bot accessibility',
+          improved: 'Ensure content loads without JavaScript and provide text alternatives for dynamic content. Use server-side rendering.',
+          reasoning: 'AI bots may have difficulty processing JavaScript-heavy content, so static content ensures better crawlability.'
+        },
+        {
+          current: 'Slow loading times affecting bot crawling',
+          improved: 'Optimize page speed by compressing images, minifying code, and improving server response times for better bot crawling.',
+          reasoning: 'Faster loading pages are crawled more efficiently by AI bots, improving the chances of content being indexed.'
+        }
+      ]
+    },
+    'Mobile Optimization': {
+      lowScore: (score: number) => score < 70,
+      improvements: [
+        {
+          current: 'Mobile page speed needs optimization',
+          improved: 'Optimize mobile page loading speed by compressing images, minifying CSS/JS, and enabling browser caching. Use WebP image format and minimize render-blocking resources.',
+          reasoning: 'Mobile page speed is a critical ranking factor and affects user experience. Google uses mobile-first indexing, making mobile performance essential.'
+        },
+        {
+          current: 'Touch targets too small or poorly spaced',
+          improved: 'Ensure all buttons and clickable elements are at least 44px × 44px with 8px spacing between them. Make navigation thumb-friendly.',
+          reasoning: 'Proper touch target sizing improves mobile usability and is considered by Google\'s mobile-friendly test algorithm.'
+        },
+        {
+          current: 'Missing or incorrect viewport configuration',
+          improved: 'Add proper viewport meta tag: <meta name="viewport" content="width=device-width, initial-scale=1">. Ensure content fits without horizontal scrolling.',
+          reasoning: 'Proper viewport configuration is essential for responsive design and mobile-first indexing by search engines.'
+        }
+      ]
+    },
+    'Schema Analysis': {
+      lowScore: (score: number) => score < 70,
+      improvements: [
+        {
+          current: 'Limited or missing structured data markup',
+          improved: 'Implement comprehensive JSON-LD structured data including Organization, WebSite, and content-specific schemas. Use Google\'s Structured Data Testing Tool to validate.',
+          reasoning: 'Structured data helps search engines understand your content better and enables rich snippets, improving click-through rates.'
+        },
+        {
+          current: 'Structured data contains validation errors',
+          improved: 'Fix JSON-LD syntax errors and ensure all required properties are included. Test with Google\'s Rich Results Test tool.',
+          reasoning: 'Valid structured data is essential for rich snippet eligibility and helps AI systems understand and categorize your content.'
+        },
+        {
+          current: 'Missing rich snippet optimization opportunities',
+          improved: 'Add FAQ schema for Q&A content, Review schema for testimonials, HowTo schema for guides, and Article schema for blog posts.',
+          reasoning: 'Rich snippets increase visibility in search results and provide more context to AI systems processing your content.'
         }
       ]
     },
@@ -247,6 +331,9 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
     const categoryKey = category === 'AI Optimization' ? 'aiOptimization' : 
                        category === 'Content Quality' ? 'contentQuality' :
                        category === 'Technical SEO' ? 'technicalSEO' :
+                       category === 'Technical Crawlability' ? 'technicalCrawlability' :
+                       category === 'Mobile Optimization' ? 'mobileOptimization' :
+                       category === 'Schema Analysis' ? 'schemaAnalysis' :
                        category === 'User Experience' ? 'userExperience' :
                        category === 'Content Structure' ? 'contentStructure' :
                        'authority';
@@ -260,7 +347,8 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
           section: category,
           current: improvement.current,
           improved: improvement.improved,
-          reasoning: improvement.reasoning
+          reasoning: improvement.reasoning,
+          priority: score.score < 50 ? 'high' : score.score < 70 ? 'medium' : 'low'
         });
       });
     }
@@ -271,6 +359,9 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
     const categoryKey = category === 'AI Optimization' ? 'aiOptimization' : 
                        category === 'Content Quality' ? 'contentQuality' :
                        category === 'Technical SEO' ? 'technicalSEO' :
+                       category === 'Technical Crawlability' ? 'technicalCrawlability' :
+                       category === 'Mobile Optimization' ? 'mobileOptimization' :
+                       category === 'Schema Analysis' ? 'schemaAnalysis' :
                        category === 'User Experience' ? 'userExperience' :
                        category === 'Content Structure' ? 'contentStructure' :
                        'authority';
@@ -284,7 +375,8 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
       section: 'Priority Action',
       current: `Multiple areas scoring below 50%: ${criticalAreas.map(([cat]) => cat).join(', ')}`,
       improved: 'Focus on these critical areas first as they have the biggest impact on your search visibility and user experience.',
-      reasoning: 'Areas scoring below 50% represent significant opportunities for improvement and should be addressed before optimizing higher-scoring areas.'
+      reasoning: 'Areas scoring below 50% represent significant opportunities for improvement and should be addressed before optimizing higher-scoring areas.',
+      priority: 'high'
     });
   }
 
@@ -294,7 +386,8 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
       section: 'Overall Strategy',
       current: `Overall score of ${analysis.overallScore}% indicates room for improvement across multiple areas`,
       improved: 'Implement a comprehensive SEO strategy focusing on content quality, technical optimization, and user experience simultaneously.',
-      reasoning: 'Holistic improvements across all areas will provide the best long-term results for search visibility and user engagement.'
+      reasoning: 'Holistic improvements across all areas will provide the best long-term results for search visibility and user engagement.',
+      priority: analysis.overallScore < 50 ? 'high' : 'medium'
     });
   }
 

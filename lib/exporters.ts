@@ -26,6 +26,9 @@ This report analyzes your website's readiness for AI-powered search engines, cha
 | Category | Score | Status |
 |----------|-------|--------|
 | **AI Optimization** | ${round(analysis.aiOptimization.score)}% | ${analysis.aiOptimization.status} |
+| **Mobile Optimization** | ${round(analysis.mobileOptimization.score)}% | ${analysis.mobileOptimization.status} |
+| **Technical Crawlability** | ${round(analysis.technicalCrawlability.score)}% | ${analysis.technicalCrawlability.status} |
+| **Schema Analysis** | ${round(analysis.schemaAnalysis.score)}% | ${analysis.schemaAnalysis.status} |
 | **Content Quality** | ${round(analysis.contentQuality.score)}% | ${analysis.contentQuality.status} |
 | **Technical SEO** | ${round(analysis.technicalSEO.score)}% | ${analysis.technicalSEO.status} |
 | **Authority & Trust** | ${round(analysis.authority.score)}% | ${analysis.authority.status} |
@@ -40,7 +43,7 @@ This report analyzes your website's readiness for AI-powered search engines, cha
 ${analysis.aiOptimization.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.aiOptimization.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.aiOptimization.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Chunkability:** ${round(analysis.aiOptimization.chunkability)}%
@@ -48,6 +51,59 @@ ${analysis.aiOptimization.recommendations.map(rec => `- ${rec}`).join('\n')}
 - **Entity Recognition:** ${round(analysis.aiOptimization.entityRecognition)}%
 - **Factual Density:** ${round(analysis.aiOptimization.factualDensity)}%
 - **Semantic Clarity:** ${round(analysis.aiOptimization.semanticClarity)}%
+- **Content Structure for AI:** ${round(analysis.aiOptimization.contentStructureForAI)}%
+- **Contextual Relevance:** ${round(analysis.aiOptimization.contextualRelevance)}%
+
+## Mobile Optimization (${round(analysis.mobileOptimization.score)}%)
+
+*Mobile-first optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
+
+### Key Findings:
+${analysis.mobileOptimization.findings.map(finding => `- ${finding}`).join('\n')}
+
+### Recommendations:
+${analysis.mobileOptimization.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
+
+### Detailed Scores:
+- **Mobile Page Speed:** ${round(analysis.mobileOptimization.mobilePageSpeed)}%
+- **Touch Targets:** ${round(analysis.mobileOptimization.touchTargets)}%
+- **Viewport Configuration:** ${round(analysis.mobileOptimization.viewportConfiguration)}%
+- **Mobile Usability:** ${round(analysis.mobileOptimization.mobileUsability)}%
+- **Responsive Design:** ${round(analysis.mobileOptimization.responsiveDesign)}%
+
+## Technical Crawlability (${round(analysis.technicalCrawlability.score)}%)
+
+*AI bot accessibility analysis by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
+
+### Key Findings:
+${analysis.technicalCrawlability.findings.map(finding => `- ${finding}`).join('\n')}
+
+### Recommendations:
+${analysis.technicalCrawlability.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
+
+### Detailed Scores:
+- **Robots Access:** ${round(analysis.technicalCrawlability.robotsAccess)}%
+- **Bot Accessibility:** ${round(analysis.technicalCrawlability.botAccessibility)}%
+- **Content Delivery:** ${round(analysis.technicalCrawlability.contentDelivery)}%
+- **JavaScript Dependency:** ${round(analysis.technicalCrawlability.javascriptDependency)}%
+- **Load Speed:** ${round(analysis.technicalCrawlability.loadSpeed)}%
+
+## Schema Analysis (${round(analysis.schemaAnalysis.score)}%)
+
+*Structured data optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
+
+### Key Findings:
+${analysis.schemaAnalysis.findings.map(finding => `- ${finding}`).join('\n')}
+
+### Recommendations:
+${analysis.schemaAnalysis.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
+
+### Detailed Scores:
+- **Schema Presence:** ${round(analysis.schemaAnalysis.schemaPresence)}%
+- **Schema Validation:** ${round(analysis.schemaAnalysis.schemaValidation)}%
+- **Rich Snippet Potential:** ${round(analysis.schemaAnalysis.richSnippetPotential)}%
+- **Structured Data Completeness:** ${round(analysis.schemaAnalysis.structuredDataCompleteness)}%
+- **JSON-LD Implementation:** ${round(analysis.schemaAnalysis.jsonLdImplementation)}%
 
 ## Content Quality (${round(analysis.contentQuality.score)}%)
 
@@ -57,7 +113,7 @@ ${analysis.aiOptimization.recommendations.map(rec => `- ${rec}`).join('\n')}
 ${analysis.contentQuality.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.contentQuality.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.contentQuality.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Long-tail Keywords:** ${round(analysis.contentQuality.longTailKeywords)}%
@@ -74,13 +130,15 @@ ${analysis.contentQuality.recommendations.map(rec => `- ${rec}`).join('\n')}
 ${analysis.technicalSEO.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.technicalSEO.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.technicalSEO.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Heading Structure:** ${round(analysis.technicalSEO.headingStructure)}%
 - **Meta Info:** ${round(analysis.technicalSEO.metaInfo)}%
 - **Alt Text:** ${round(analysis.technicalSEO.altText)}%
 - **Links:** ${round(analysis.technicalSEO.links)}%
+- **Schema Markup:** ${round(analysis.technicalSEO.schemaMarkup)}%
+- **Page Speed:** ${round(analysis.technicalSEO.pageSpeed)}%
 
 ## Authority & Trust (${round(analysis.authority.score)}%)
 
@@ -90,7 +148,7 @@ ${analysis.technicalSEO.recommendations.map(rec => `- ${rec}`).join('\n')}
 ${analysis.authority.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.authority.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.authority.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Social Media Presence:** ${round(analysis.authority.socialMediaPresence)}%
@@ -107,7 +165,7 @@ ${analysis.authority.recommendations.map(rec => `- ${rec}`).join('\n')}
 ${analysis.userExperience.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.userExperience.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.userExperience.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Contact Info:** ${round(analysis.userExperience.contactInfo)}%
@@ -122,7 +180,7 @@ ${analysis.userExperience.recommendations.map(rec => `- ${rec}`).join('\n')}
 ${analysis.contentStructure.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.contentStructure.recommendations.map(rec => `- ${rec}`).join('\n')}
+${analysis.contentStructure.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
 - **Structured Content:** ${round(analysis.contentStructure.structuredContent)}%
@@ -134,13 +192,15 @@ ${analysis.contentStructure.recommendations.map(rec => `- ${rec}`).join('\n')}
 *Strategic improvements recommended by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
 ${analysis.contentImprovements.map((improvement, index) => `
-### ${index + 1}. ${improvement.section}
+### ${index + 1}. ${improvement.section} - **${improvement.priority.toUpperCase()} PRIORITY**
 
 **Current:** ${improvement.current}
 
 **Improved:** ${improvement.improved}
 
 **Why this helps:** ${improvement.reasoning}
+
+${improvement.implementation ? `**Implementation Steps:**\n${improvement.implementation}` : ''}
 `).join('\n')}
 
 ## Next Steps
@@ -261,6 +321,9 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     pdf.setFontSize(10);
     const scores = [
       ['AI Optimization', round(analysis.aiOptimization.score), analysis.aiOptimization.status],
+      ['Mobile Optimization', round(analysis.mobileOptimization.score), analysis.mobileOptimization.status],
+      ['Technical Crawlability', round(analysis.technicalCrawlability.score), analysis.technicalCrawlability.status],
+      ['Schema Analysis', round(analysis.schemaAnalysis.score), analysis.schemaAnalysis.status],
       ['Content Quality', round(analysis.contentQuality.score), analysis.contentQuality.status],
       ['Technical SEO', round(analysis.technicalSEO.score), analysis.technicalSEO.status],
       ['Authority & Trust', round(analysis.authority.score), analysis.authority.status],
@@ -293,7 +356,45 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
           ['Q&A Format', round(analysis.aiOptimization.qaFormat)],
           ['Entity Recognition', round(analysis.aiOptimization.entityRecognition)],
           ['Factual Density', round(analysis.aiOptimization.factualDensity)],
-          ['Semantic Clarity', round(analysis.aiOptimization.semanticClarity)]
+          ['Semantic Clarity', round(analysis.aiOptimization.semanticClarity)],
+          ['Content Structure for AI', round(analysis.aiOptimization.contentStructureForAI)],
+          ['Contextual Relevance', round(analysis.aiOptimization.contextualRelevance)]
+        ]
+      },
+      {
+        title: 'Mobile Optimization',
+        data: analysis.mobileOptimization,
+        subtitle: 'Mobile-first optimization by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Mobile Page Speed', round(analysis.mobileOptimization.mobilePageSpeed)],
+          ['Touch Targets', round(analysis.mobileOptimization.touchTargets)],
+          ['Viewport Configuration', round(analysis.mobileOptimization.viewportConfiguration)],
+          ['Mobile Usability', round(analysis.mobileOptimization.mobileUsability)],
+          ['Responsive Design', round(analysis.mobileOptimization.responsiveDesign)]
+        ]
+      },
+      {
+        title: 'Technical Crawlability',
+        data: analysis.technicalCrawlability,
+        subtitle: 'AI bot accessibility analysis by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Robots Access', round(analysis.technicalCrawlability.robotsAccess)],
+          ['Bot Accessibility', round(analysis.technicalCrawlability.botAccessibility)],
+          ['Content Delivery', round(analysis.technicalCrawlability.contentDelivery)],
+          ['JavaScript Dependency', round(analysis.technicalCrawlability.javascriptDependency)],
+          ['Load Speed', round(analysis.technicalCrawlability.loadSpeed)]
+        ]
+      },
+      {
+        title: 'Schema Analysis',
+        data: analysis.schemaAnalysis,
+        subtitle: 'Structured data optimization by Search Influence - AI SEO Experts',
+        detailedScores: [
+          ['Schema Presence', round(analysis.schemaAnalysis.schemaPresence)],
+          ['Schema Validation', round(analysis.schemaAnalysis.schemaValidation)],
+          ['Rich Snippet Potential', round(analysis.schemaAnalysis.richSnippetPotential)],
+          ['Structured Data Completeness', round(analysis.schemaAnalysis.structuredDataCompleteness)],
+          ['JSON-LD Implementation', round(analysis.schemaAnalysis.jsonLdImplementation)]
         ]
       },
       {
@@ -316,7 +417,9 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
           ['Heading Structure', round(analysis.technicalSEO.headingStructure)],
           ['Meta Info', round(analysis.technicalSEO.metaInfo)],
           ['Alt Text', round(analysis.technicalSEO.altText)],
-          ['Links', round(analysis.technicalSEO.links)]
+          ['Links', round(analysis.technicalSEO.links)],
+          ['Schema Markup', round(analysis.technicalSEO.schemaMarkup)],
+          ['Page Speed', round(analysis.technicalSEO.pageSpeed)]
         ]
       },
       {
@@ -397,7 +500,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       section.data.recommendations.forEach(rec => {
-        const lines = pdf.splitTextToSize(`• ${rec}`, contentWidth);
+        const recText = typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`;
+        const lines = pdf.splitTextToSize(`• ${recText}`, contentWidth);
         lines.forEach((line: string) => {
           checkPageBreak(5);
           pdf.text(line, margin + 5, yPos);
@@ -440,7 +544,7 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
         
         pdf.setFontSize(11);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(`${index + 1}. ${improvement.section}`, margin, yPos);
+        pdf.text(`${index + 1}. ${improvement.section} - ${improvement.priority.toUpperCase()} PRIORITY`, margin, yPos);
         yPos += 8;
         
         pdf.setFontSize(9);
@@ -468,6 +572,18 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
           pdf.text(line, margin + 5, yPos);
           yPos += 5;
         });
+        yPos += 2;
+        
+        if (improvement.implementation) {
+          const implementationLines = pdf.splitTextToSize(`Implementation: ${improvement.implementation}`, contentWidth);
+          implementationLines.forEach((line: string) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+        }
+        
         yPos += 8;
       });
     }
