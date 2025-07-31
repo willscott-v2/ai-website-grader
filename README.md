@@ -1,12 +1,11 @@
 # AI Website Grader - Search Influence
 
-A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 15, TypeScript, and Tailwind CSS.
+A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 15, TypeScript, and a modern design system.
 
 **Powered by Search Influence** - AI-Driven SEO Experts for Higher Education and Healthcare.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.4.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ## 🚀 Features
@@ -40,30 +39,29 @@ A comprehensive web application that analyzes websites for their readiness in AI
   - Testimonials and reviews
   - Professional affiliations
 
-- **User Engagement** (10% weight)
+- **User Experience** (10% weight)
   - Contact information accessibility
   - Call-to-action effectiveness
   - Language accessibility
-  - Structured content usage
-  - Multimedia integration
 
 ### Key Features
 - **URL Analysis**: Crawl and analyze live websites
 - **Text Analysis**: Analyze pasted content directly
 - **Comprehensive Scoring**: Weighted scoring system focused on AI optimization
 - **Detailed Reports**: In-depth analysis with actionable recommendations
-- **Export Options**: PDF and Markdown export functionality
-- **Professional UI**: Clean, modern interface similar to RankScale
+- **Multiple Export Options**: PDF (with clickable URLs), Markdown, and Print
+- **Modern Design**: Clean, professional interface with GetChunks design system
 - **Real-time Analysis**: Instant results with detailed breakdowns
+- **Precise Scoring**: All numbers rounded to 2 decimal places for clean display
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Custom CSS with modern design system
 - **Icons**: Lucide React
 - **HTML Parsing**: Cheerio
-- **PDF Generation**: jsPDF + html2canvas
+- **PDF Generation**: jsPDF with clickable URLs
 - **Deployment**: Vercel-ready
 
 ## 📦 Installation
@@ -99,7 +97,7 @@ ai-website-grader/
 ├── app/
 │   ├── api/analyze/
 │   │   └── route.ts          # API endpoint for analysis
-│   ├── globals.css           # Global styles
+│   ├── globals.css           # Global styles with design system
 │   ├── layout.tsx            # Root layout
 │   ├── not-found.tsx         # 404 page
 │   └── page.tsx              # Main application page
@@ -112,21 +110,13 @@ ai-website-grader/
 │   ├── analysis-engine.ts    # Main analysis orchestration
 │   ├── analyzer.ts           # Core analysis functions
 │   ├── crawler.ts            # Website crawling logic
-│   ├── exporters.ts          # PDF/Markdown export
+│   ├── exporters.ts          # PDF/Markdown export with clickable URLs
 │   └── utils.ts              # Utility functions
 ├── types/
 │   └── index.ts              # TypeScript definitions
 ├── public/                   # Static assets
 ├── vercel.json               # Vercel deployment config
 └── DEPLOYMENT.md             # Deployment guide
-```
-│   ├── analyzer.ts           # Core analysis functions
-│   ├── crawler.ts            # Website crawling logic
-│   ├── exporters.ts          # PDF/Markdown export
-│   └── utils.ts              # Utility functions
-├── types/
-│   └── index.ts              # TypeScript definitions
-└── public/                   # Static assets
 ```
 
 ## 🔧 Usage
@@ -135,13 +125,18 @@ ai-website-grader/
 1. Enter a website URL in the input field
 2. Click "Analyze Website"
 3. View comprehensive results with detailed breakdowns
-4. Export results as PDF or Markdown
+4. Export results as PDF (with clickable URLs), Markdown, or Print
 
 ### Text Analysis
 1. Switch to "Analyze Text" mode
 2. Paste your website content (minimum 100 characters)
 3. Get instant analysis of your content
 4. Receive actionable recommendations
+
+### Export Options
+- **Export PDF**: Downloads a professional PDF with clickable URLs
+- **Export Markdown**: Downloads a markdown file for documentation
+- **Print Report**: Opens a print-friendly HTML version
 
 ### Understanding Scores
 - **80-100%**: Excellent - Your content is well-optimized for AI search
@@ -167,7 +162,7 @@ The scoring system uses weighted calculations with AI Optimization receiving the
 - Content Quality: 25%
 - Technical SEO: 20%
 - Authority & Trust: 15%
-- User Engagement: 10%
+- User Experience: 10%
 
 ## 🚀 Deployment
 
@@ -202,16 +197,35 @@ Response:
 {
   "url": "https://example.com",
   "title": "Example Website",
-  "overallScore": 75,
+  "overallScore": 75.00,
   "timestamp": "2024-01-01T00:00:00.000Z",
   "technicalSEO": { /* detailed analysis */ },
   "contentQuality": { /* detailed analysis */ },
   "aiOptimization": { /* detailed analysis */ },
   "authority": { /* detailed analysis */ },
-  "engagement": { /* detailed analysis */ },
+  "userExperience": { /* detailed analysis */ },
   "contentImprovements": [ /* priority improvements */ ]
 }
 ```
+
+## 🎨 Design System
+
+The application uses a modern design system with:
+- **Color Palette**: Professional blues, oranges, and grays
+- **Typography**: Clean, readable fonts
+- **Components**: Consistent card layouts and spacing
+- **Responsive Design**: Works on all device sizes
+- **Accessibility**: WCAG compliant design
+
+## 📄 Recent Updates
+
+### Latest Improvements
+- ✅ **Fixed Decimal Display**: All scores now rounded to 2 decimal places
+- ✅ **Enhanced PDF Generation**: Professional PDF with clickable URLs
+- ✅ **Modern Design System**: Updated UI with GetChunks design
+- ✅ **Multiple Export Options**: PDF, Markdown, and Print functionality
+- ✅ **Clickable URLs**: PDF includes clickable links to Search Influence and AI Website Grader
+- ✅ **Improved Performance**: Faster analysis and better error handling
 
 ## 🤝 Contributing
 
@@ -228,10 +242,11 @@ This project is licensed under the MIT License.
 ## 🙏 Acknowledgments
 
 - Built with Next.js and TypeScript
-- Styled with Tailwind CSS
+- Modern design system implementation
 - Icons from Lucide React
 - HTML parsing with Cheerio
 - PDF generation with jsPDF
+- Powered by Search Influence
 
 ---
 
