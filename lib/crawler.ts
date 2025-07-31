@@ -69,6 +69,25 @@ export function parseTextContent(text: string): CrawledContent {
     validationErrors: []
   };
   
+  // Add default markdown content for manual input
+  content.markdownContent = text; // Use the original text as markdown
+  
+  // Add default UX info for manual input
+  content.uxInfo = {
+    hasNavigation: false,
+    navigationStructure: [],
+    formCount: 0,
+    formFields: [],
+    hasSearchBox: false,
+    hasContactForm: false,
+    hasErrorPages: false,
+    accessibilityFeatures: [],
+    interactiveElementsCount: 0,
+    hasLoadingIndicators: false,
+    hasSocialProof: false,
+    socialElements: []
+  };
+  
   return content;
 }
 
@@ -138,6 +157,12 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
   // Estimate load time (simplified for demo - in production this would be measured)
   const loadTime = estimateLoadTime(html, images.length);
   
+  // Generate markdown content
+  const markdownContent = generateMarkdownContent($, title, headings, paragraphs);
+  
+  // Analyze UX information
+  const uxInfo = analyzeUXInfo($, html);
+
   return {
     title,
     metaDescription,
@@ -152,7 +177,9 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
     loadTime,
     hasJavaScriptDependency,
     mobileInfo,
-    enhancedSchemaInfo
+    enhancedSchemaInfo,
+    markdownContent,
+    uxInfo
   };
 }
 
@@ -316,4 +343,167 @@ function normalizeUrl(url: string): string {
     return `https://${url}`;
   }
   return url;
+}
+
+function generateMarkdownContent(
+  $: cheerio.CheerioAPI, 
+  title: string, 
+  headings: { level: number; text: string }[], 
+  paragraphs: string[]
+): string {
+  let markdown = `# ${title}\n\n`;
+  
+  // Add headings and content in document order
+  const contentElements: { type: 'heading' | 'paragraph'; content: string; level?: number }[] = [];
+  
+  // Extract main content area
+  const mainContent = $('main, article, .content, .main-content, #content').first();
+  const contentArea = mainContent.length > 0 ? mainContent : $('body');
+  
+  contentArea.find('h1, h2, h3, h4, h5, h6, p').each((_, element) => {
+    const $el = $(element);
+    const tagName = element.tagName.toLowerCase();
+    const text = $el.text().trim();
+    
+    if (text) {
+      if (tagName.startsWith('h')) {
+        const level = parseInt(tagName.charAt(1));
+        contentElements.push({
+          type: 'heading',
+          content: text,
+          level
+        });
+      } else if (tagName === 'p') {
+        contentElements.push({
+          type: 'paragraph',
+          content: text
+        });
+      }
+    }
+  });
+  
+  // Convert to markdown
+  contentElements.forEach(element => {
+    if (element.type === 'heading' && element.level) {
+      const prefix = '#'.repeat(element.level);
+      markdown += `${prefix} ${element.content}\n\n`;
+    } else if (element.type === 'paragraph') {
+      markdown += `${element.content}\n\n`;
+    }
+  });
+  
+  // Add lists
+  $('ul, ol').each((_, list) => {
+    const $list = $(list);
+    const isOrdered = list.tagName.toLowerCase() === 'ol';
+    
+    $list.find('li').each((index, item) => {
+      const text = $(item).text().trim();
+      if (text) {
+        const prefix = isOrdered ? `${index + 1}. ` : '- ';
+        markdown += `${prefix}${text}\n`;
+      }
+    });
+    markdown += '\n';
+  });
+  
+  // Add links section
+  const links = $('a[href]').map((_, link) => {
+    const $link = $(link);
+    const href = $link.attr('href');
+    const text = $link.text().trim();
+    return { href, text };
+  }).get();
+  
+  if (links.length > 0) {
+    markdown += '## Links\n\n';
+    links.slice(0, 10).forEach(link => { // Limit to first 10 links
+      if (link.text && link.href) {
+        markdown += `- [${link.text}](${link.href})\n`;
+      }
+    });
+    markdown += '\n';
+  }
+  
+  return markdown;
+}
+
+function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxInfo'] {
+  // Navigation analysis
+  const navElements = $('nav, .nav, .navigation, .navbar, .menu');
+  const hasNavigation = navElements.length > 0;
+  const navigationStructure: string[] = [];
+  
+  navElements.find('a, li').each((_, element) => {
+    const text = $(element).text().trim();
+    if (text && text.length < 50) { // Reasonable nav item length
+      navigationStructure.push(text);
+    }
+  });
+  
+  // Form analysis
+  const forms = $('form');
+  const formCount = forms.length;
+  const formFields: string[] = [];
+  
+  forms.find('input, textarea, select').each((_, field) => {
+    const type = $(field).attr('type') || field.tagName.toLowerCase();
+    const name = $(field).attr('name') || $(field).attr('id') || type;
+    formFields.push(name);
+  });
+  
+  // Search functionality
+  const searchInputs = $('input[type="search"], input[name*="search"], input[id*="search"], input[placeholder*="search" i]');
+  const hasSearchBox = searchInputs.length > 0;
+  
+  // Contact form detection
+  const contactForms = $('form').filter((_, form) => {
+    const formHtml = $(form).html()?.toLowerCase() || '';
+    return formHtml.includes('contact') || formHtml.includes('email') || formHtml.includes('message');
+  });
+  const hasContactForm = contactForms.length > 0;
+  
+  // Error page detection (basic)
+  const hasErrorPages = html.toLowerCase().includes('404') || html.toLowerCase().includes('error');
+  
+  // Accessibility features
+  const accessibilityFeatures: string[] = [];
+  if ($('[alt]').length > 0) accessibilityFeatures.push('Image alt attributes');
+  if ($('[aria-label]').length > 0) accessibilityFeatures.push('ARIA labels');
+  if ($('[role]').length > 0) accessibilityFeatures.push('ARIA roles');
+  if ($('button, input[type="button"], input[type="submit"]').length > 0) accessibilityFeatures.push('Interactive buttons');
+  if ($('[tabindex]').length > 0) accessibilityFeatures.push('Tab navigation');
+  if ($('label').length > 0) accessibilityFeatures.push('Form labels');
+  
+  // Interactive elements
+  const interactiveElements = $('button, input, select, textarea, a[href], [onclick], [onsubmit]');
+  const interactiveElementsCount = interactiveElements.length;
+  
+  // Loading indicators
+  const loadingIndicators = $('.loading, .spinner, .loader, [class*="load"]');
+  const hasLoadingIndicators = loadingIndicators.length > 0;
+  
+  // Social proof elements
+  const socialElements: string[] = [];
+  if ($('.testimonial, .review, .rating').length > 0) socialElements.push('testimonials/reviews');
+  if ($('.social, [class*="facebook"], [class*="twitter"], [class*="linkedin"]').length > 0) socialElements.push('social media links');
+  if ($('.badge, .certification, .award').length > 0) socialElements.push('badges/certifications');
+  if ($('.customer, .client, .partner').length > 0) socialElements.push('customer logos');
+  
+  const hasSocialProof = socialElements.length > 0;
+  
+  return {
+    hasNavigation,
+    navigationStructure: navigationStructure.slice(0, 10), // Limit to first 10
+    formCount,
+    formFields: formFields.slice(0, 20), // Limit to first 20
+    hasSearchBox,
+    hasContactForm,
+    hasErrorPages,
+    accessibilityFeatures,
+    interactiveElementsCount,
+    hasLoadingIndicators,
+    hasSocialProof,
+    socialElements
+  };
 } 

@@ -350,7 +350,17 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           details={{
             contactInfo: analysis.userExperience.contactInfo,
             callsToAction: analysis.userExperience.callsToAction,
-            language: analysis.userExperience.language
+            language: analysis.userExperience.language,
+            navigation: analysis.userExperience.navigation,
+            formUsability: analysis.userExperience.formUsability,
+            loadingExperience: analysis.userExperience.loadingExperience,
+            errorHandling: analysis.userExperience.errorHandling,
+            accessibility: analysis.userExperience.accessibility,
+            visualHierarchy: analysis.userExperience.visualHierarchy,
+            interactiveElements: analysis.userExperience.interactiveElements,
+            searchFunctionality: analysis.userExperience.searchFunctionality,
+            contentReadability: analysis.userExperience.contentReadability,
+            socialProof: analysis.userExperience.socialProof
           }}
         />
 
@@ -370,6 +380,83 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           }}
         />
       </div>
+
+      {/* Page Content (Markdown) */}
+      {analysis.crawledContent.markdownContent && (
+        <div style={{ 
+          marginTop: '40px',
+          background: 'var(--content-bg)',
+          borderRadius: '12px',
+          padding: '40px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+        }}>
+          <details style={{ cursor: 'pointer' }}>
+            <summary style={{ 
+              fontSize: '2rem', 
+              fontWeight: '700', 
+              color: 'var(--content-text)', 
+              margin: '0 0 20px 0',
+              listStyle: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}>
+              <span style={{ 
+                transform: 'rotate(0deg)',
+                transition: 'transform 0.2s ease',
+                fontSize: '1.2rem'
+              }}>
+                ▶️
+              </span>
+              Page Content Structure (Markdown)
+            </summary>
+            <div style={{
+              marginTop: '20px',
+              background: '#1e1e1e',
+              borderRadius: '8px',
+              padding: '20px',
+              overflow: 'auto',
+              maxHeight: '400px',
+              border: '1px solid var(--border-gray)'
+            }}>
+              <pre style={{
+                margin: 0,
+                color: '#d4d4d4',
+                fontSize: '14px',
+                lineHeight: '1.5',
+                fontFamily: '"Fira Code", "Monaco", "Menlo", "Ubuntu Mono", monospace',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word'
+              }}>
+                <code>{analysis.crawledContent.markdownContent}</code>
+              </pre>
+            </div>
+            <div style={{
+              marginTop: '15px',
+              padding: '12px',
+              background: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '6px',
+              border: '1px solid rgba(59, 130, 246, 0.2)'
+            }}>
+              <p style={{
+                margin: 0,
+                fontSize: '0.9rem',
+                color: 'var(--secondary-content)',
+                lineHeight: '1.4'
+              }}>
+                💡 <strong>Pro Tip:</strong> This markdown representation shows how AI systems might parse and understand your content structure. 
+                Well-organized content with clear headings and logical flow helps AI models provide better answers about your page.
+              </p>
+            </div>
+          </details>
+          
+          <style jsx>{`
+            details[open] summary span {
+              transform: rotate(90deg);
+            }
+          `}</style>
+        </div>
+      )}
 
       {/* Content Improvements */}
       {analysis.contentImprovements.length > 0 && (

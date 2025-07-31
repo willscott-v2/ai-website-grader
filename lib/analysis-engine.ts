@@ -80,7 +80,8 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     authority,
     userExperience,
     contentStructure,
-    contentImprovements: []
+    contentImprovements: [],
+    crawledContent: content
   });
   
   return {
@@ -97,7 +98,8 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     authority,
     userExperience,
     contentStructure,
-    contentImprovements
+    contentImprovements,
+    crawledContent: content
   };
 }
 

@@ -371,7 +371,13 @@ export function analyzeUserExperience(content: CrawledContent): UserExperience {
       'Make contact information more prominent and accessible',
       'medium',
       'contact-accessibility',
-      '1. Add contact info in header and footer\n2. Create a dedicated contact page\n3. Include phone, email, and address\n4. Add business hours and contact forms\n5. Make contact info visible on every page'
+      '1. Add contact info in header and footer\n2. Create a dedicated contact page\n3. Include phone, email, and address\n4. Add business hours and contact forms\n5. Make contact info visible on every page',
+      '<div class="contact-info">\n  <h3>Contact Us</h3>\n  <p>📞 (555) 123-4567</p>\n  <p>📧 info@example.com</p>\n  <p>📍 123 Main St, City, State</p>\n</div>',
+      ['Google My Business', 'Contact form plugins', 'Schema markup for LocalBusiness'],
+      'medium',
+      '1-2 hours',
+      'Check if contact info appears in multiple places and is easily clickable on mobile',
+      ['https://developers.google.com/search/docs/data-types/local-business', 'https://schema.org/LocalBusiness']
     ));
   }
   
@@ -381,9 +387,15 @@ export function analyzeUserExperience(content: CrawledContent): UserExperience {
     findings.push('Calls-to-action could be more compelling and strategically placed');
     recommendations.push(createRecommendation(
       'Improve calls-to-action placement and effectiveness',
-      'medium',
+      'high',
       'cta-optimization',
-      '1. Use action-oriented language (Get Started, Learn More)\n2. Make CTA buttons visually prominent\n3. Place CTAs at the end of sections\n4. Use contrasting colors for CTA buttons\n5. Test different CTA variations'
+      '1. Use action-oriented language (Get Started, Learn More)\n2. Make CTA buttons visually prominent\n3. Place CTAs at the end of sections\n4. Use contrasting colors for CTA buttons\n5. Test different CTA variations',
+      '<button class="cta-button primary">\n  🚀 Get Started Free\n</button>\n\n<a href="/demo" class="cta-link">\n  👀 See Live Demo\n</a>',
+      ['Hotjar', 'Google Optimize', 'Unbounce', 'Figma for design'],
+      'high',
+      '2-4 hours',
+      'Use heatmaps to verify CTA clicks and A/B test different versions',
+      ['https://blog.hubspot.com/marketing/call-to-action-examples', 'https://unbounce.com/conversion-rate-optimization/']
     ));
   }
   
@@ -393,13 +405,204 @@ export function analyzeUserExperience(content: CrawledContent): UserExperience {
     findings.push('Language may not be accessible to all audiences');
     recommendations.push(createRecommendation(
       'Improve language accessibility and readability',
-      'low',
+      'medium',
       'language-accessibility',
-      '1. Use clear, simple language for target audience\n2. Avoid unnecessary jargon and technical terms\n3. Write in active voice\n4. Keep sentences concise (15-20 words)\n5. Define technical terms when necessary'
+      '1. Use clear, simple language for target audience\n2. Avoid unnecessary jargon and technical terms\n3. Write in active voice\n4. Keep sentences concise (15-20 words)\n5. Define technical terms when necessary',
+      '<!-- Instead of: -->\n<p>Utilize our comprehensive solution...</p>\n\n<!-- Use: -->\n<p>Use our complete tool to help you...</p>',
+      ['Hemingway Editor', 'Grammarly', 'Readable.io'],
+      'medium',
+      '1-3 hours',
+      'Run content through readability tools and aim for 8th grade reading level',
+      ['https://hemingwayapp.com/', 'https://readable.com/']
     ));
   }
   
-  const score = Math.round((contactInfo + callsToAction + language) / 3);
+  // Analyze navigation structure
+  const navigation = analyzeNavigation(content);
+  if (navigation < 70) {
+    findings.push('Navigation structure needs improvement for better user experience');
+    recommendations.push(createRecommendation(
+      'Enhance navigation structure and usability',
+      'high',
+      'navigation-optimization',
+      '1. Use clear, descriptive menu labels\n2. Limit main navigation to 7±2 items\n3. Add breadcrumb navigation\n4. Include search functionality\n5. Make navigation sticky on scroll\n6. Add visual hierarchy with dropdowns',
+      '<nav class="main-nav">\n  <ul>\n    <li><a href="/about">About</a></li>\n    <li><a href="/services">Services</a>\n      <ul class="dropdown">\n        <li><a href="/web-design">Web Design</a></li>\n        <li><a href="/seo">SEO</a></li>\n      </ul>\n    </li>\n  </ul>\n</nav>',
+      ['TreeJack for navigation testing', 'OptimalSort for card sorting'],
+      'high',
+      '3-6 hours',
+      'Conduct user testing to verify navigation clarity and findability',
+      ['https://www.nngroup.com/articles/menu-design/', 'https://www.smashingmagazine.com/2013/12/redesigning-navigation/']
+    ));
+  }
+  
+  // Analyze form usability
+  const formUsability = analyzeFormUsability(content);
+  if (formUsability < 70) {
+    findings.push('Forms need better usability and user experience');
+    recommendations.push(createRecommendation(
+      'Improve form design and usability',
+      'medium',
+      'form-optimization',
+      '1. Use clear field labels and placeholders\n2. Group related fields together\n3. Provide real-time validation feedback\n4. Minimize required fields\n5. Add progress indicators for multi-step forms\n6. Use appropriate input types (email, tel, etc.)',
+      '<form class="user-friendly-form">\n  <div class="field-group">\n    <label for="email">Email Address *</label>\n    <input type="email" id="email" required\n           placeholder="your@email.com">\n    <span class="validation-message"></span>\n  </div>\n</form>',
+      ['Formik', 'React Hook Form', 'Typeform', 'Gravity Forms'],
+      'medium',
+      '2-4 hours',
+      'Test form completion rates and monitor abandonment points',
+      ['https://www.smashingmagazine.com/2018/08/ux-html5-mobile-form-part-1/', 'https://uxplanet.org/designing-more-efficient-forms-assistance-and-validation-f26a5241199d']
+    ));
+  }
+  
+  // Analyze loading experience
+  const loadingExperience = analyzeLoadingExperience(content);
+  if (loadingExperience < 70) {
+    findings.push('Loading experience could be improved with better feedback');
+    recommendations.push(createRecommendation(
+      'Enhance loading states and perceived performance',
+      'high',
+      'loading-optimization',
+      '1. Add loading spinners for async operations\n2. Use skeleton screens for content loading\n3. Implement progressive image loading\n4. Show progress bars for file uploads\n5. Prefetch critical resources\n6. Use service workers for offline experience',
+      '<div class="skeleton-loader">\n  <div class="skeleton-header"></div>\n  <div class="skeleton-text"></div>\n  <div class="skeleton-image"></div>\n</div>\n\n<div class="loading-spinner">\n  <span>Loading...</span>\n</div>',
+      ['React Suspense', 'Lottie for animations', 'LazyLoad libraries'],
+      'high',
+      '4-8 hours',
+      'Monitor Core Web Vitals and user feedback on loading experience',
+      ['https://web.dev/skeleton-screens/', 'https://uxplanet.org/how-to-design-better-loading-states-f1e4bbe0c3a6']
+    ));
+  }
+  
+  // Analyze error handling
+  const errorHandling = analyzeErrorHandling(content);
+  if (errorHandling < 70) {
+    findings.push('Error handling and user feedback systems need improvement');
+    recommendations.push(createRecommendation(
+      'Implement comprehensive error handling and user feedback',
+      'medium',
+      'error-handling',
+      '1. Create custom 404 and 500 error pages\n2. Add helpful navigation on error pages\n3. Include search functionality on error pages\n4. Use friendly, non-technical error messages\n5. Provide clear next steps for users\n6. Log errors for monitoring',
+      '<div class="error-page">\n  <h1>Oops! Page not found</h1>\n  <p>The page you\'re looking for doesn\'t exist.</p>\n  <div class="error-actions">\n    <a href="/" class="btn">Go Home</a>\n    <a href="/contact" class="btn">Contact Us</a>\n  </div>\n  <div class="search-box">\n    <input type="search" placeholder="Search our site...">\n  </div>\n</div>',
+      ['Sentry for error monitoring', 'LogRocket for user sessions'],
+      'medium',
+      '2-3 hours',
+      'Monitor error page analytics and user behavior after errors',
+      ['https://www.smashingmagazine.com/2009/01/404-error-pages-one-more-time/', 'https://uxplanet.org/error-handling-in-ux-design-useful-tips-and-best-practices-cc53c1f7a2c9']
+    ));
+  }
+  
+  // Analyze accessibility
+  const accessibility = analyzeAccessibility(content);
+  if (accessibility < 70) {
+    findings.push('Accessibility features need significant improvement');
+    recommendations.push(createRecommendation(
+      'Implement comprehensive accessibility improvements',
+      'high',
+      'accessibility-enhancement',
+      '1. Add alt text to all images\n2. Use proper heading hierarchy (h1-h6)\n3. Ensure sufficient color contrast (4.5:1 ratio)\n4. Add ARIA labels and roles\n5. Make site keyboard navigable\n6. Include focus indicators\n7. Test with screen readers',
+      '<img src="chart.jpg" alt="Sales increased 25% from Q1 to Q2 2023">\n\n<button aria-label="Close dialog" class="close-btn">\n  <span aria-hidden="true">&times;</span>\n</button>\n\n<nav aria-label="Main navigation" role="navigation">',
+      ['WAVE Web Accessibility Evaluator', 'axe DevTools', 'NVDA screen reader'],
+      'high',
+      '6-12 hours',
+      'Run automated accessibility tests and manual screen reader testing',
+      ['https://www.w3.org/WAI/WCAG21/quickref/', 'https://webaim.org/resources/']
+    ));
+  }
+  
+  // Analyze visual hierarchy
+  const visualHierarchy = analyzeVisualHierarchy(content);
+  if (visualHierarchy < 70) {
+    findings.push('Visual hierarchy could be improved for better content scanning');
+    recommendations.push(createRecommendation(
+      'Enhance visual hierarchy and content organization',
+      'medium',
+      'visual-hierarchy',
+      '1. Use consistent heading sizes and weights\n2. Implement proper typography scale\n3. Add sufficient white space between sections\n4. Use visual cues like colors and icons\n5. Group related content together\n6. Create clear content sections',
+      '<h1 class="page-title">Main Heading (32px)</h1>\n<h2 class="section-title">Section Heading (24px)</h2>\n<h3 class="subsection-title">Subsection (20px)</h3>\n<p class="body-text">Body text (16px)</p>\n<p class="caption">Caption text (14px)</p>',
+      ['Figma for design', 'Adobe XD', 'Typography scale generators'],
+      'medium',
+      '3-5 hours',
+      'Use eye-tracking studies or heatmaps to verify scanning patterns',
+      ['https://www.nngroup.com/articles/visual-hierarchy/', 'https://www.typescale.com/']
+    ));
+  }
+  
+  // Analyze interactive elements
+  const interactiveElements = analyzeInteractiveElements(content);
+  if (interactiveElements < 70) {
+    findings.push('Interactive elements need better design and feedback');
+    recommendations.push(createRecommendation(
+      'Improve interactive element design and usability',
+      'medium',
+      'interactive-optimization',
+      '1. Make clickable elements obviously clickable\n2. Use hover and focus states\n3. Ensure touch targets are at least 44px\n4. Provide immediate feedback on interactions\n5. Use consistent interaction patterns\n6. Add loading states for actions',
+      'button {\n  padding: 12px 24px;\n  min-height: 44px;\n  min-width: 44px;\n  border-radius: 4px;\n  transition: all 0.2s ease;\n}\n\nbutton:hover {\n  background-color: #0056b3;\n  transform: translateY(-1px);\n}\n\nbutton:active {\n  transform: translateY(0);\n}',
+      ['CSS transitions', 'Framer Motion', 'GSAP for animations'],
+      'medium',
+      '2-4 hours',
+      'Test with users on different devices and monitor interaction analytics',
+      ['https://material.io/design/interaction/', 'https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/']
+    ));
+  }
+  
+  // Analyze search functionality
+  const searchFunctionality = analyzeSearchFunctionality(content);
+  if (searchFunctionality < 70) {
+    findings.push('Search functionality is missing or needs improvement');
+    recommendations.push(createRecommendation(
+      'Implement or enhance search functionality',
+      'medium',
+      'search-enhancement',
+      '1. Add prominent search box in header\n2. Include search suggestions/autocomplete\n3. Implement filters and sorting options\n4. Show search result counts\n5. Handle no-results cases gracefully\n6. Track search analytics',
+      '<div class="search-container">\n  <input type="search" \n         placeholder="Search products, articles..."\n         class="search-input"\n         autocomplete="off">\n  <button class="search-btn">🔍</button>\n  <div class="search-suggestions"></div>\n</div>',
+      ['Algolia', 'Elasticsearch', 'Lunr.js for client-side search'],
+      'medium',
+      '4-8 hours',
+      'Monitor search success rates and most common search terms',
+      ['https://www.nngroup.com/articles/search-interface/', 'https://blog.algolia.com/ux-search-best-practices/']
+    ));
+  }
+  
+  // Analyze content readability
+  const contentReadability = analyzeContentReadability(content);
+  if (contentReadability < 70) {
+    findings.push('Content readability needs improvement');
+    recommendations.push(createRecommendation(
+      'Enhance content readability and structure',
+      'medium',
+      'readability-improvement',
+      '1. Use shorter paragraphs (2-3 sentences)\n2. Add bullet points and numbered lists\n3. Implement proper line spacing (1.5x)\n4. Choose readable fonts (16px minimum)\n5. Ensure good contrast ratios\n6. Break up text with subheadings',
+      'p {\n  font-size: 16px;\n  line-height: 1.6;\n  margin-bottom: 1rem;\n  max-width: 65ch; /* Optimal reading width */\n}\n\nul {\n  margin: 1rem 0;\n  padding-left: 1.5rem;\n}\n\nli {\n  margin-bottom: 0.5rem;\n}',
+      ['Hemingway Editor', 'Readable.io', 'Google Fonts'],
+      'medium',
+      '2-3 hours',
+      'Test with real users and measure reading completion rates',
+      ['https://www.nngroup.com/articles/how-users-read-on-the-web/', 'https://practicaltypography.com/']
+    ));
+  }
+  
+  // Analyze social proof
+  const socialProof = analyzeSocialProof(content);
+  if (socialProof < 70) {
+    findings.push('Social proof elements could be enhanced');
+    recommendations.push(createRecommendation(
+      'Add compelling social proof elements',
+      'low',
+      'social-proof',
+      '1. Add customer testimonials with photos\n2. Display client logos or badges\n3. Show user counts or statistics\n4. Include customer reviews and ratings\n5. Add case studies and success stories\n6. Display social media followers',
+      '<div class="testimonial">\n  <blockquote>\n    "This product increased our sales by 40%"\n  </blockquote>\n  <cite>\n    <img src="customer.jpg" alt="John Smith">\n    <span>John Smith, CEO of Example Corp</span>\n  </cite>\n</div>\n\n<div class="social-proof">\n  <span>Trusted by 10,000+ customers</span>\n  <div class="client-logos">...</div>\n</div>',
+      ['Testimonial plugins', 'Review aggregation tools', 'Trustpilot'],
+      'low',
+      '3-6 hours',
+      'Monitor conversion rates before and after adding social proof',
+      ['https://cxl.com/blog/social-proof/', 'https://blog.hubspot.com/marketing/social-proof-examples']
+    ));
+  }
+  
+  const score = Math.round((
+    contactInfo + callsToAction + language + navigation + formUsability + 
+    loadingExperience + errorHandling + accessibility + visualHierarchy + 
+    interactiveElements + searchFunctionality + contentReadability + socialProof
+  ) / 13);
+  
   const status = getScoreStatus(score);
   
   return {
@@ -409,7 +612,17 @@ export function analyzeUserExperience(content: CrawledContent): UserExperience {
     recommendations,
     contactInfo,
     callsToAction,
-    language
+    language,
+    navigation,
+    formUsability,
+    loadingExperience,
+    errorHandling,
+    accessibility,
+    visualHierarchy,
+    interactiveElements,
+    searchFunctionality,
+    contentReadability,
+    socialProof
   };
 }
 
@@ -1177,13 +1390,25 @@ function createRecommendation(
   text: string, 
   priority: 'high' | 'medium' | 'low' = 'medium',
   category: string = 'general',
-  implementation?: string
+  implementation?: string,
+  codeExample?: string,
+  tools?: string[],
+  expectedImpact?: 'high' | 'medium' | 'low',
+  timeToImplement?: string,
+  testingInstructions?: string,
+  resources?: string[]
 ): RecommendationItem {
   return {
     text,
     priority,
     category,
-    implementation
+    implementation,
+    codeExample,
+    tools,
+    expectedImpact,
+    timeToImplement,
+    testingInstructions,
+    resources
   };
 }
 
@@ -1389,6 +1614,231 @@ function analyzeJsonLdImplementation(content: CrawledContent): number {
   const html = content.html;
   const headSection = html.substring(0, html.indexOf('</head>') + 7);
   if (headSection.includes('application/ld+json')) score += 10;
+  
+  return Math.min(100, score);
+}
+
+// Enhanced UX Analysis Helper Functions
+
+function analyzeNavigation(content: CrawledContent): number {
+  let score = 40;
+  
+  if (!content.uxInfo) return score;
+  
+  const { hasNavigation, navigationStructure } = content.uxInfo;
+  
+  if (hasNavigation) {
+    score += 30;
+    
+    // Check navigation quality
+    if (navigationStructure.length > 0) {
+      score += 20;
+      
+      // Ideal navigation has 3-7 main items
+      if (navigationStructure.length >= 3 && navigationStructure.length <= 7) {
+        score += 10;
+      }
+    }
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeFormUsability(content: CrawledContent): number {
+  let score = 50;
+  
+  if (!content.uxInfo) return score;
+  
+  const { formCount, formFields, hasContactForm } = content.uxInfo;
+  
+  if (formCount > 0) {
+    score += 20;
+    
+    // Check for appropriate form fields
+    if (formFields.length > 0) {
+      score += 15;
+      
+      // Look for good UX indicators
+      const hasLabels = formFields.some(field => field.includes('label'));
+      const hasValidation = formFields.some(field => field.includes('required') || field.includes('validation'));
+      
+      if (hasLabels) score += 10;
+      if (hasValidation) score += 5;
+    }
+    
+    if (hasContactForm) score += 10;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeLoadingExperience(content: CrawledContent): number {
+  let score = 60;
+  
+  if (!content.uxInfo) return score;
+  
+  const { hasLoadingIndicators } = content.uxInfo;
+  
+  if (hasLoadingIndicators) score += 20;
+  
+  // Check for performance indicators
+  if (content.loadTime) {
+    if (content.loadTime < 2000) score += 20; // Fast loading
+    else if (content.loadTime < 4000) score += 10; // Moderate loading
+    // Slow loading gets no bonus
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeErrorHandling(content: CrawledContent): number {
+  let score = 40;
+  
+  if (!content.uxInfo) return score;
+  
+  const { hasErrorPages } = content.uxInfo;
+  
+  if (hasErrorPages) {
+    score += 30;
+    
+    // Basic error handling exists
+    const html = content.html.toLowerCase();
+    if (html.includes('search') && html.includes('error')) score += 15;
+    if (html.includes('home') && html.includes('error')) score += 15;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeAccessibility(content: CrawledContent): number {
+  let score = 20;
+  
+  if (!content.uxInfo) return score;
+  
+  const { accessibilityFeatures } = content.uxInfo;
+  
+  if (accessibilityFeatures.length > 0) {
+    score += accessibilityFeatures.length * 12; // Each feature adds 12 points
+  }
+  
+  // Check for alt text on images
+  const imagesWithAlt = content.images.filter(img => img.alt && img.alt.trim().length > 0);
+  if (imagesWithAlt.length > 0) {
+    const altTextRatio = imagesWithAlt.length / content.images.length;
+    score += altTextRatio * 20;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeVisualHierarchy(content: CrawledContent): number {
+  let score = 40;
+  
+  // Check heading structure
+  const headings = content.headings;
+  if (headings.length > 0) {
+    score += 20;
+    
+    // Check for proper heading hierarchy
+    const hasH1 = headings.some(h => h.level === 1);
+    const hasH2 = headings.some(h => h.level === 2);
+    
+    if (hasH1) score += 15;
+    if (hasH2) score += 10;
+    
+    // Check for logical progression
+    const levels = headings.map(h => h.level);
+    const maxLevel = Math.max(...levels);
+    const minLevel = Math.min(...levels);
+    
+    if (minLevel === 1 && maxLevel <= 4) score += 15; // Good hierarchy range
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeInteractiveElements(content: CrawledContent): number {
+  let score = 30;
+  
+  if (!content.uxInfo) return score;
+  
+  const { interactiveElementsCount } = content.uxInfo;
+  
+  if (interactiveElementsCount > 0) {
+    score += 30;
+    
+    // More interactive elements generally better for engagement
+    if (interactiveElementsCount > 5) score += 20;
+    if (interactiveElementsCount > 10) score += 20;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeSearchFunctionality(content: CrawledContent): number {
+  let score = 30;
+  
+  if (!content.uxInfo) return score;
+  
+  const { hasSearchBox } = content.uxInfo;
+  
+  if (hasSearchBox) {
+    score += 50;
+    
+    // Check for advanced search features
+    const html = content.html.toLowerCase();
+    if (html.includes('autocomplete')) score += 10;
+    if (html.includes('filter')) score += 10;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeContentReadability(content: CrawledContent): number {
+  let score = 40;
+  
+  const paragraphs = content.paragraphs;
+  if (paragraphs.length > 0) {
+    // Check average paragraph length
+    const avgLength = paragraphs.reduce((sum, p) => sum + p.length, 0) / paragraphs.length;
+    
+    if (avgLength < 500) score += 20; // Good paragraph length
+    if (avgLength < 300) score += 10; // Excellent paragraph length
+    
+    // Check for lists and structured content
+    const text = paragraphs.join(' ').toLowerCase();
+    if (text.includes('•') || text.includes('1.') || text.includes('-')) score += 15;
+    
+    // Check sentence structure
+    const totalSentences = paragraphs.reduce((sum, p) => {
+      return sum + (p.split(/[.!?]+/).length - 1);
+    }, 0);
+    
+    const avgSentencesPerParagraph = totalSentences / paragraphs.length;
+    if (avgSentencesPerParagraph >= 2 && avgSentencesPerParagraph <= 4) score += 15;
+  }
+  
+  return Math.min(100, score);
+}
+
+function analyzeSocialProof(content: CrawledContent): number {
+  let score = 20;
+  
+  if (!content.uxInfo) return score;
+  
+  const { hasSocialProof, socialElements } = content.uxInfo;
+  
+  if (hasSocialProof) {
+    score += 40;
+    
+    // Each type of social proof adds value
+    score += socialElements.length * 10;
+  }
+  
+  // Check for numbers/statistics
+  const text = content.paragraphs.join(' ').toLowerCase();
+  const hasNumbers = /\d+[,.]?\d*[%k+]/.test(text);
+  if (hasNumbers) score += 20;
   
   return Math.min(100, score);
 } 

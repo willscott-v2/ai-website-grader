@@ -10,6 +10,12 @@ export interface RecommendationItem {
   priority: 'high' | 'medium' | 'low';
   category: string;
   implementation?: string; // Step-by-step guide
+  codeExample?: string; // HTML/CSS/JS code examples
+  tools?: string[]; // Recommended tools or resources
+  expectedImpact?: 'high' | 'medium' | 'low';
+  timeToImplement?: string; // e.g., "5 minutes", "1 hour", "1 day"
+  testingInstructions?: string; // How to verify the fix worked
+  resources?: string[]; // Links to documentation or guides
 }
 
 export interface TechnicalSEO extends AnalysisScore {
@@ -59,6 +65,16 @@ export interface UserExperience extends AnalysisScore {
   contactInfo: number;
   callsToAction: number;
   language: number;
+  navigation: number;
+  formUsability: number;
+  loadingExperience: number;
+  errorHandling: number;
+  accessibility: number;
+  visualHierarchy: number;
+  interactiveElements: number;
+  searchFunctionality: number;
+  contentReadability: number;
+  socialProof: number;
 }
 
 export interface ContentStructure extends AnalysisScore {
@@ -115,6 +131,21 @@ export interface CrawledContent {
     schemaTypes: string[];
     validationErrors: string[];
   };
+  markdownContent?: string;
+  uxInfo?: {
+    hasNavigation: boolean;
+    navigationStructure: string[];
+    formCount: number;
+    formFields: string[];
+    hasSearchBox: boolean;
+    hasContactForm: boolean;
+    hasErrorPages: boolean;
+    accessibilityFeatures: string[];
+    interactiveElementsCount: number;
+    hasLoadingIndicators: boolean;
+    hasSocialProof: boolean;
+    socialElements: string[];
+  };
 }
 
 export interface WebsiteAnalysis {
@@ -132,6 +163,7 @@ export interface WebsiteAnalysis {
   userExperience: UserExperience;
   contentStructure: ContentStructure;
   contentImprovements: ContentImprovement[];
+  crawledContent: CrawledContent;
 }
 
 export interface ContentImprovement {
