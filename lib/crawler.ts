@@ -73,7 +73,7 @@ export function parseTextContent(text: string): CrawledContent {
 }
 
 function parseHtmlContent(html: string, url: string): CrawledContent {
-  const $ = cheerio.load(html);
+  const $ = cheerio.load(html) as cheerio.CheerioAPI;
   
   // Extract title
   const title = $('title').text().trim() || $('h1').first().text().trim() || 'Untitled';
