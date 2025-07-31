@@ -17,6 +17,9 @@ export default function ScoreCard({
   recommendations, 
   details 
 }: ScoreCardProps) {
+  // Helper function to round numbers to 2 decimal places
+  const round = (num: number) => Math.round(num * 100) / 100;
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'excellent':
@@ -100,7 +103,7 @@ export default function ScoreCard({
               color: getScoreColor(score),
               marginRight: '20px'
             }}>
-              {score}%
+              {round(score)}%
             </span>
             <div style={{ flex: 1 }}>
               <div style={{ 
@@ -116,7 +119,7 @@ export default function ScoreCard({
                     borderRadius: '10px', 
                     background: getScoreColor(score),
                     transition: 'all 0.3s ease',
-                    width: `${score}%`
+                    width: `${round(score)}%`
                   }}
                 />
               </div>
@@ -219,7 +222,7 @@ export default function ScoreCard({
                     fontWeight: '600', 
                     color: getScoreColor(value) 
                   }}>
-                    {value}%
+                    {round(value)}%
                   </span>
                 </div>
               ))}
