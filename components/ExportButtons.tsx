@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, FileText, FileDown, Loader2, Printer } from 'lucide-react';
+import { FileText, FileDown, Loader2, Printer } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
-import { generatePDFReport } from '@/lib/exporters';
+import { generatePDFReport, generateMarkdownReport } from '@/lib/exporters';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
@@ -30,7 +30,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log('Calling generatePDFReport...');
-      await generatePDFReport(analysis, 'report-container');
+      await generatePDFReport(analysis);
       
       console.log('PDF export completed successfully');
     } catch (error) {
@@ -50,9 +50,8 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       return;
     }
 
-    // Import the markdown generation function
-    const { generateMarkdownReport } = require('@/lib/exporters');
-    const markdownContent = generateMarkdownReport(analysis);
+    // Generate markdown content
+    generateMarkdownReport(analysis);
     
     // Helper function to round numbers
     const round = (num: number) => Math.round(num * 100) / 100;
@@ -153,21 +152,12 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             padding: 8px; 
             margin: 8px 0; 
           }
-          .next-steps { 
-            background-color: #d1ecf1; 
-            border: 1px solid #bee5eb; 
-            padding: 10px; 
-          }
           .footer { 
             margin-top: 30px; 
-            padding-top: 15px; 
+            padding-top: 20px; 
             border-top: 1px solid #000; 
             font-size: 10px; 
             color: #666; 
-          }
-          a {
-            color: #000;
-            text-decoration: underline;
           }
           @media print {
             body { margin: 0; }
@@ -177,21 +167,21 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       </head>
       <body>
         <h1>AI Website Grader Report</h1>
-        <p><strong>Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</strong></p>
+        <p><strong>Powered by Search Influence - AI SEO Experts</strong></p>
         
         <div class="section">
-          <h3>Website Information</h3>
+          <h2>Website Information</h2>
           <p><strong>Website:</strong> ${analysis.url}</p>
           <p><strong>Title:</strong> ${analysis.title}</p>
           <p><strong>Generated:</strong> ${new Date(analysis.timestamp).toLocaleDateString()}</p>
           <p><strong>Overall Score:</strong> <span class="score">${round(analysis.overallScore)}%</span></p>
         </div>
-
+        
         <div class="section">
           <h2>Executive Summary</h2>
-          <p>This report analyzes your website's readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
+          <p>This report analyzes your website's readiness for AI-powered search engines, chat interfaces, and modern search algorithms. The analysis focuses on factors that influence visibility in AI overviews, voice search results, and chatbot responses. Powered by Search Influence - AI SEO Experts.</p>
         </div>
-
+        
         <div class="section">
           <h2>Score Breakdown</h2>
           <table>
@@ -236,10 +226,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </tbody>
           </table>
         </div>
-
+        
         <div class="section">
           <h2>AI Optimization (${round(analysis.aiOptimization.score)}%)</h2>
-          <p><em>Optimized for AI search engines by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Optimized for AI search engines by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -266,10 +256,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         <div class="section">
           <h2>Content Quality (${round(analysis.contentQuality.score)}%)</h2>
-          <p><em>Content optimization powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Content optimization powered by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -296,10 +286,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         <div class="section">
           <h2>Technical SEO (${round(analysis.technicalSEO.score)}%)</h2>
-          <p><em>Technical optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Technical optimization by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -325,10 +315,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         <div class="section">
           <h2>Authority & Trust (${round(analysis.authority.score)}%)</h2>
-          <p><em>Authority building strategies from <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Authority building strategies from Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -355,10 +345,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         <div class="section">
           <h2>User Experience (${round(analysis.userExperience.score)}%)</h2>
-          <p><em>UX optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>UX optimization by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -383,10 +373,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         <div class="section">
           <h2>Content Structure (${round(analysis.contentStructure.score)}%)</h2>
-          <p><em>Content structure optimization by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Content structure optimization by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
@@ -411,11 +401,11 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-
+        
         ${analysis.contentImprovements.length > 0 ? `
-        <div class="section">
+        <div class="section improvements">
           <h2>Priority Content Improvements</h2>
-          <p><em>Strategic improvements recommended by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts</em></p>
+          <p><em>Strategic improvements recommended by Search Influence - AI SEO Experts</em></p>
           
           ${analysis.contentImprovements.map((improvement, index) => `
             <div class="improvement-item">
@@ -433,21 +423,20 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           `).join('')}
         </div>
         ` : ''}
-
+        
         <div class="section">
           <h2>Next Steps</h2>
-          <div class="next-steps">
-            <ol>
-              <li>Focus on AI Optimization - This is the most impactful area for future search visibility</li>
-              <li>Implement Priority Improvements - Start with the content improvements listed above</li>
-              <li>Monitor Progress - Re-run this analysis after implementing changes</li>
-              <li>Stay Updated - AI search algorithms evolve rapidly; regular audits are recommended</li>
-            </ol>
-          </div>
+          <p><em>Powered by Search Influence - AI SEO Experts</em></p>
+          <ol>
+            <li><strong>Focus on AI Optimization</strong> - This is the most impactful area for future search visibility</li>
+            <li><strong>Implement Priority Improvements</strong> - Start with the content improvements listed above</li>
+            <li><strong>Monitor Progress</strong> - Re-run this analysis after implementing changes</li>
+            <li><strong>Stay Updated</strong> - AI search algorithms evolve rapidly; regular audits are recommended</li>
+          </ol>
         </div>
-
+        
         <div class="footer">
-          <p>Report generated by <a href="https://ai-grader.searchinfluence.com/">AI Website Grader</a> - Optimizing content for the AI-powered search future. Powered by <a href="https://www.searchinfluence.com/">Search Influence</a> - AI SEO Experts.</p>
+          <p>Report generated by AI Website Grader - Optimizing content for the AI-powered search future. Powered by Search Influence - AI SEO Experts.</p>
         </div>
       </body>
       </html>
@@ -455,6 +444,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
     printWindow.document.write(printContent);
     printWindow.document.close();
+    printWindow.focus();
     
     // Wait for content to load, then print
     printWindow.onload = () => {

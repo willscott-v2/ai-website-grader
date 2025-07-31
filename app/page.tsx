@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import URLAnalyzer from '@/components/URLAnalyzer';
 import ScoreReport from '@/components/ScoreReport';
 import { WebsiteAnalysis } from '@/types';
@@ -23,15 +24,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Header with GetChunks Design */}
+    <div>
+      {/* Header with Search Influence branding */}
       <header className="header">
         <div className="container">
           <div className="header-content">
             <div className="logo-section">
               <div className="logo-container">
                 <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
-                  <img src="/search-influence-logo.png" alt="Search Influence" className="si-logo" />
+                  <Image src="/search-influence-logo.png" alt="Search Influence" className="si-logo" width={200} height={60} />
                 </a>
               </div>
               <h1>AI Website Grader</h1>
@@ -107,7 +108,7 @@ export default function Home() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
               <div className="logo-container" style={{ margin: '0 15px 0 0' }}>
                 <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer">
-                  <img src="/search-influence-logo.png" alt="Search Influence" className="si-logo" />
+                  <Image src="/search-influence-logo.png" alt="Search Influence" className="si-logo" width={200} height={60} />
                 </a>
               </div>
               <div>
@@ -127,6 +128,9 @@ export default function Home() {
               <span>•</span>
               <span>AI Website Grader v1.0</span>
               <span>•</span>
+              <a href="https://ai-grader.searchinfluence.com" target="_blank" rel="noopener noreferrer">
+                AI Website Grader
+              </a>
             </div>
           </div>
         </div>
