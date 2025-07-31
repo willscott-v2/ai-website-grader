@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Search, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 
@@ -190,7 +190,7 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
                 {error.includes('Please reload the page') && (
                   <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
                     <p className="text-blue-800 text-sm font-medium">
-                      💡 <strong>Quick Fix:</strong> Please reload the page, then click the "Analyze Text" tab above and paste your website content directly.
+                      💡 <strong>Quick Fix:</strong> Please reload the page, then click the &quot;Analyze Text&quot; tab above and paste your website content directly.
                     </p>
                   </div>
                 )}

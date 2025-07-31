@@ -255,7 +255,7 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
     
     if (strategy.lowScore(score.score)) {
       // Add multiple improvements for low-scoring areas
-      strategy.improvements.forEach((improvement, index) => {
+      strategy.improvements.forEach((improvement) => {
         improvements.push({
           section: category,
           current: improvement.current,
@@ -267,7 +267,7 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
   });
 
   // Add priority improvements for very low scores
-  const criticalAreas = Object.entries(improvementStrategies).filter(([category, strategy]) => {
+  const criticalAreas = Object.entries(improvementStrategies).filter(([category]) => {
     const categoryKey = category === 'AI Optimization' ? 'aiOptimization' : 
                        category === 'Content Quality' ? 'contentQuality' :
                        category === 'Technical SEO' ? 'technicalSEO' :
