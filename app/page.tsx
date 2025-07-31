@@ -39,7 +39,7 @@ export default function Home() {
             </div>
             <div className="header-description">
               <p>
-                Analyze your website's readiness for AI-powered search engines, 
+                Analyze your website&apos;s readiness for AI-powered search engines, 
                 chat interfaces, and modern search algorithms. Get actionable insights 
                 to improve your visibility in AI overviews, voice search results, 
                 and chatbot responses.

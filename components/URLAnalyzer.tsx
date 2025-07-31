@@ -202,7 +202,7 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
                     borderRadius: '6px' 
                   }}>
                     <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--info-blue)', fontWeight: '500' }}>
-                      💡 <strong>Quick Fix:</strong> Please reload the page, then click the "Analyze Text" tab above and paste your website content directly.
+                      💡 <strong>Quick Fix:</strong> Please reload the page, then click the &quot;Analyze Text&quot; tab above and paste your website content directly.
                     </p>
                   </div>
                 )}
