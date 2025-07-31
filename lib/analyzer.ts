@@ -1331,6 +1331,11 @@ function analyzeSchemaValidation(content: CrawledContent): number {
     }
   });
   
+  // Bonus points for having valid JSON-LD schemas
+  if (validJsonLd > 0) {
+    score += Math.min(10, validJsonLd * 2);
+  }
+  
   return Math.max(0, score);
 }
 

@@ -266,11 +266,12 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
       const parsed = JSON.parse(schema);
       
       // Extract @type values
-      function extractTypes(obj: any): void {
-        if (obj && typeof obj === 'object') {
-          if (obj['@type']) {
-            const type = Array.isArray(obj['@type']) ? obj['@type'] : [obj['@type']];
-            type.forEach((t: string) => {
+      function extractTypes(obj: unknown): void {
+        if (obj && typeof obj === 'object' && obj !== null) {
+          const objRecord = obj as Record<string, unknown>;
+          if (objRecord['@type']) {
+            const type = Array.isArray(objRecord['@type']) ? objRecord['@type'] : [objRecord['@type']];
+            type.forEach((t: unknown) => {
               if (typeof t === 'string' && !schemaTypes.includes(t)) {
                 schemaTypes.push(t);
               }
@@ -278,7 +279,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
           }
           
           // Recursively check nested objects
-          Object.values(obj).forEach(value => {
+          Object.values(objRecord).forEach(value => {
             if (typeof value === 'object') {
               extractTypes(value);
             }
@@ -297,7 +298,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
         validationErrors.push(`Schema ${index + 1}: Missing @type`);
       }
       
-    } catch (error) {
+    } catch {
       validationErrors.push(`Schema ${index + 1}: Invalid JSON syntax`);
     }
   });
