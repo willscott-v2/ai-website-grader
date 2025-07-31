@@ -189,6 +189,43 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
     // Helper function to round numbers
     const round = (num: number) => Math.round(num * 100) / 100;
     
+    // Helper function to process text and extract links
+    const processTextWithLinks = (text: string) => {
+      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+      
+      while ((match = linkRegex.exec(text)) !== null) {
+        // Add text before the link
+        if (match.index > lastIndex) {
+          parts.push({
+            type: 'text',
+            content: text.substring(lastIndex, match.index)
+          });
+        }
+        
+        // Add the link
+        parts.push({
+          type: 'link',
+          text: match[1],
+          url: match[2]
+        });
+        
+        lastIndex = match.index + match[0].length;
+      }
+      
+      // Add remaining text
+      if (lastIndex < text.length) {
+        parts.push({
+          type: 'text',
+          content: text.substring(lastIndex)
+        });
+      }
+      
+      return parts;
+    };
+    
     // Split markdown content into lines
     const lines = markdownContent.split('\n');
     
@@ -224,7 +261,23 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         checkPageBreak(8);
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(line.substring(2, line.length - 2), margin, yPos);
+        const text = line.substring(2, line.length - 2);
+        const parts = processTextWithLinks(text);
+        
+        let currentX = margin;
+        parts.forEach(part => {
+          if (part.type === 'text' && part.content) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0, 0, 0);
+            pdf.text(part.content, currentX, yPos);
+            currentX += pdf.getTextWidth(part.content);
+          } else if (part.type === 'link' && part.text) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0, 0, 255);
+            pdf.text(part.text, currentX, yPos);
+            currentX += pdf.getTextWidth(part.text);
+          }
+        });
         yPos += 8;
       } else if (line.startsWith('|')) {
         // Table row - handle table rendering
@@ -288,58 +341,58 @@ export async function generatePDFReport(analysis: WebsiteAnalysis, elementId: st
         checkPageBreak(8);
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'italic');
-        pdf.text(line.substring(1, line.length - 1), margin, yPos);
-        yPos += 8;
-      } else if (line.includes('[') && line.includes('](') && line.includes(')')) {
-        // Link - extract text and URL
-        const linkMatch = line.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (linkMatch) {
-          const linkText = linkMatch[1];
-          const linkUrl = linkMatch[2];
-          const textBefore = line.substring(0, line.indexOf('['));
-          const textAfter = line.substring(line.indexOf(')') + 1);
-          
-          if (textBefore.trim()) {
-            const wrappedLines = pdf.splitTextToSize(textBefore, contentWidth);
-            wrappedLines.forEach((wrappedLine: string) => {
-              checkPageBreak(5);
-              pdf.setFontSize(9);
-              pdf.setFont('helvetica', 'normal');
-              pdf.text(wrappedLine, margin, yPos);
-              yPos += 5;
-            });
+        const text = line.substring(1, line.length - 1);
+        const parts = processTextWithLinks(text);
+        
+        let currentX = margin;
+        parts.forEach(part => {
+          if (part.type === 'text' && part.content) {
+            pdf.setFont('helvetica', 'italic');
+            pdf.setTextColor(0, 0, 0);
+            pdf.text(part.content, currentX, yPos);
+            currentX += pdf.getTextWidth(part.content);
+          } else if (part.type === 'link' && part.text) {
+            pdf.setFont('helvetica', 'italic');
+            pdf.setTextColor(0, 0, 255);
+            pdf.text(part.text, currentX, yPos);
+            currentX += pdf.getTextWidth(part.text);
           }
-          
-          // Add link text with blue color
-          checkPageBreak(5);
-          pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setTextColor(0, 0, 255);
-          pdf.text(linkText, margin, yPos);
-          pdf.setTextColor(0, 0, 0);
-          yPos += 5;
-          
-          if (textAfter.trim()) {
-            const wrappedLines = pdf.splitTextToSize(textAfter, contentWidth);
-            wrappedLines.forEach((wrappedLine: string) => {
-              checkPageBreak(5);
-              pdf.setFontSize(9);
-              pdf.setFont('helvetica', 'normal');
-              pdf.text(wrappedLine, margin, yPos);
-              yPos += 5;
-            });
-          }
-        }
-      } else {
-        // Regular text
-        const wrappedLines = pdf.splitTextToSize(line, contentWidth);
-        wrappedLines.forEach((wrappedLine: string) => {
-          checkPageBreak(5);
-          pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'normal');
-          pdf.text(wrappedLine, margin, yPos);
-          yPos += 5;
         });
+        yPos += 8;
+      } else {
+        // Regular text - check for links
+        if (line.includes('[') && line.includes('](') && line.includes(')')) {
+          // Text with links
+          const parts = processTextWithLinks(line);
+          
+          let currentX = margin;
+          parts.forEach(part => {
+            if (part.type === 'text' && part.content) {
+              pdf.setFontSize(9);
+              pdf.setFont('helvetica', 'normal');
+              pdf.setTextColor(0, 0, 0);
+              pdf.text(part.content, currentX, yPos);
+              currentX += pdf.getTextWidth(part.content);
+            } else if (part.type === 'link' && part.text) {
+              pdf.setFontSize(9);
+              pdf.setFont('helvetica', 'normal');
+              pdf.setTextColor(0, 0, 255);
+              pdf.text(part.text, currentX, yPos);
+              currentX += pdf.getTextWidth(part.text);
+            }
+          });
+          yPos += 5;
+        } else {
+          // Regular text without links
+          const wrappedLines = pdf.splitTextToSize(line, contentWidth);
+          wrappedLines.forEach((wrappedLine: string) => {
+            checkPageBreak(5);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(wrappedLine, margin, yPos);
+            yPos += 5;
+          });
+        }
         yPos += 2;
       }
     }
