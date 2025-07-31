@@ -220,7 +220,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           score={analysis.aiOptimization.score}
           status={analysis.aiOptimization.status}
           findings={analysis.aiOptimization.findings}
-          recommendations={analysis.aiOptimization.recommendations}
+          recommendations={analysis.aiOptimization.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             chunkability: analysis.aiOptimization.chunkability,
             qaFormat: analysis.aiOptimization.qaFormat,
@@ -232,11 +234,64 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
 
         {/* Content Quality */}
         <ScoreCard
+          title="Mobile Optimization"
+          score={analysis.mobileOptimization.score}
+          status={analysis.mobileOptimization.status}
+          findings={analysis.mobileOptimization.findings}
+          recommendations={analysis.mobileOptimization.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            mobilePageSpeed: analysis.mobileOptimization.mobilePageSpeed,
+            touchTargets: analysis.mobileOptimization.touchTargets,
+            viewportConfiguration: analysis.mobileOptimization.viewportConfiguration,
+            mobileUsability: analysis.mobileOptimization.mobileUsability,
+            responsiveDesign: analysis.mobileOptimization.responsiveDesign
+          }}
+        />
+
+        <ScoreCard
+          title="Technical Crawlability"
+          score={analysis.technicalCrawlability.score}
+          status={analysis.technicalCrawlability.status}
+          findings={analysis.technicalCrawlability.findings}
+          recommendations={analysis.technicalCrawlability.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            robotsAccess: analysis.technicalCrawlability.robotsAccess,
+            botAccessibility: analysis.technicalCrawlability.botAccessibility,
+            contentDelivery: analysis.technicalCrawlability.contentDelivery,
+            javascriptDependency: analysis.technicalCrawlability.javascriptDependency,
+            loadSpeed: analysis.technicalCrawlability.loadSpeed
+          }}
+        />
+
+        <ScoreCard
+          title="Schema Analysis"
+          score={analysis.schemaAnalysis.score}
+          status={analysis.schemaAnalysis.status}
+          findings={analysis.schemaAnalysis.findings}
+          recommendations={analysis.schemaAnalysis.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            schemaPresence: analysis.schemaAnalysis.schemaPresence,
+            schemaValidation: analysis.schemaAnalysis.schemaValidation,
+            richSnippetPotential: analysis.schemaAnalysis.richSnippetPotential,
+            structuredDataCompleteness: analysis.schemaAnalysis.structuredDataCompleteness,
+            jsonLdImplementation: analysis.schemaAnalysis.jsonLdImplementation
+          }}
+        />
+
+        <ScoreCard
           title="Content Quality"
           score={analysis.contentQuality.score}
           status={analysis.contentQuality.status}
           findings={analysis.contentQuality.findings}
-          recommendations={analysis.contentQuality.recommendations}
+          recommendations={analysis.contentQuality.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             longTailKeywords: analysis.contentQuality.longTailKeywords,
             comprehensiveCoverage: analysis.contentQuality.comprehensiveCoverage,
@@ -252,12 +307,16 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           score={analysis.technicalSEO.score}
           status={analysis.technicalSEO.status}
           findings={analysis.technicalSEO.findings}
-          recommendations={analysis.technicalSEO.recommendations}
+          recommendations={analysis.technicalSEO.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             headingStructure: analysis.technicalSEO.headingStructure,
             metaInfo: analysis.technicalSEO.metaInfo,
             altText: analysis.technicalSEO.altText,
-            links: analysis.technicalSEO.links
+            links: analysis.technicalSEO.links,
+            schemaMarkup: analysis.technicalSEO.schemaMarkup,
+            pageSpeed: analysis.technicalSEO.pageSpeed
           }}
         />
 
@@ -267,7 +326,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           score={analysis.authority.score}
           status={analysis.authority.status}
           findings={analysis.authority.findings}
-          recommendations={analysis.authority.recommendations}
+          recommendations={analysis.authority.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             socialMediaPresence: analysis.authority.socialMediaPresence,
             companyInformation: analysis.authority.companyInformation,
@@ -283,7 +344,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           score={analysis.userExperience.score}
           status={analysis.userExperience.status}
           findings={analysis.userExperience.findings}
-          recommendations={analysis.userExperience.recommendations}
+          recommendations={analysis.userExperience.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             contactInfo: analysis.userExperience.contactInfo,
             callsToAction: analysis.userExperience.callsToAction,
@@ -297,7 +360,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           score={analysis.contentStructure.score}
           status={analysis.contentStructure.status}
           findings={analysis.contentStructure.findings}
-          recommendations={analysis.contentStructure.recommendations}
+          recommendations={analysis.contentStructure.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
             structuredContent: analysis.contentStructure.structuredContent,
             multimedia: analysis.contentStructure.multimedia,
