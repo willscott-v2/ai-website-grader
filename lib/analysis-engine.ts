@@ -43,8 +43,6 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   }
   
   // Run all analyses in parallel for better performance
-  console.log('🔄 Running parallel analysis...');
-  
   const [
     technicalSEO,
     technicalCrawlability,
@@ -66,8 +64,6 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     Promise.resolve(analyzeUserExperience(content)),
     Promise.resolve(analyzeContentStructure(content))
   ]);
-  
-  console.log('✅ Parallel analysis complete');
   
   // Calculate weighted overall score
   const overallScore = calculateOverallScore({

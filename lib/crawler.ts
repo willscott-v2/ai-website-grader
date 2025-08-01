@@ -173,7 +173,6 @@ async function analyzePerformanceWithCaching(url: string, html: string): Promise
     const cacheKey = createCacheKey(url, 'performance');
     const cached = performanceCache.get(cacheKey);
     if (cached) {
-      console.log('📋 Using cached performance data');
       return cached;
     }
   }
