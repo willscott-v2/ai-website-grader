@@ -91,7 +91,10 @@ export async function getPageSpeedInsights(url: string): Promise<{
     // Check if API key is available (optional)
     const apiKey = process.env.GOOGLE_PAGESPEED_API_KEY;
     
+    console.log('PageSpeed API check - Key exists:', !!apiKey, 'Length:', apiKey?.length || 0);
+    
     if (!apiKey) {
+      console.log('Using estimated performance metrics (no API key)');
       // Return estimated values based on content analysis
       return getEstimatedPerformanceMetrics();
     }
