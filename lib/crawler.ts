@@ -66,13 +66,15 @@ export function parseTextContent(text: string): CrawledContent {
     jsonLdCount: 0,
     microdataCount: 0,
     schemaTypes: [],
-    validationErrors: []
+    validationErrors: [],
+    aiFriendlySchemas: [],
+    conversationalElements: 0
   };
   
   // Add default markdown content for manual input
   content.markdownContent = text; // Use the original text as markdown
   
-  // Add default UX info for manual input
+    // Add default UX info for manual input
   content.uxInfo = {
     hasNavigation: false,
     navigationStructure: [],
@@ -88,6 +90,54 @@ export function parseTextContent(text: string): CrawledContent {
     socialElements: []
   };
   
+  // Add default AI analysis data for manual input
+  content.aiAnalysisData = {
+    detectedEntities: {
+      persons: [],
+      organizations: [],
+      locations: [],
+      brands: []
+    },
+    answerFormats: {
+      qaCount: 0,
+      listCount: 0,
+      stepByStepCount: 0,
+      definitionCount: 0
+    },
+    authoritySignals: {
+      authorBylines: [],
+      publicationDates: [],
+      credentialMentions: [],
+      authorityLinks: []
+    },
+    factualIndicators: {
+      citations: 0,
+      statistics: 0,
+      dates: [],
+      sources: [],
+      externalLinks: 0
+    },
+    botAccessibility: {
+      aiBotDirectives: {
+        gptBot: 'unspecified',
+        googleExtended: 'unspecified',
+        chatgptUser: 'unspecified',
+        claudeWeb: 'unspecified',
+        bingBot: 'unspecified',
+        ccBot: 'unspecified',
+        perplexityBot: 'unspecified'
+      },
+      metaRobotsAI: [],
+      contentAvailability: 'full'
+    },
+    voiceSearchOptimization: {
+      naturalLanguagePatterns: 0,
+      conversationalContent: 0,
+      questionFormats: 0,
+      speakableContent: false
+    }
+  };
+
   return content;
 }
 
@@ -164,7 +214,7 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
   const uxInfo = analyzeUXInfo($, html);
   
   // Enhanced AI analysis
-  const aiAnalysisData = analyzeAIContent($, html, content);
+  const aiAnalysisData = analyzeAIContent($, html, { title, paragraphs, headings, links });
 
   return {
     title,
@@ -555,14 +605,19 @@ function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxI
 }
 
 // Enhanced AI Content Analysis using pattern-matching algorithms
-function analyzeAIContent($: cheerio.CheerioAPI, html: string, basicContent: any): CrawledContent['aiAnalysisData'] {
-  const fullText = basicContent.paragraphs.join(' ') + ' ' + basicContent.headings.map((h: any) => h.text).join(' ');
+function analyzeAIContent($: cheerio.CheerioAPI, html: string, basicContent: {
+  title: string;
+  paragraphs: string[];
+  headings: { level: number; text: string }[];
+  links: { href: string; text: string; internal: boolean }[];
+}): CrawledContent['aiAnalysisData'] {
+  const fullText = basicContent.paragraphs.join(' ') + ' ' + basicContent.headings.map((h: { level: number; text: string }) => h.text).join(' ');
   
   // 1. Advanced Entity Detection using Smart Patterns
   const detectedEntities = detectEntitiesAdvanced(fullText, html);
   
   // 2. Answer Format Analysis
-  const answerFormats = analyzeAnswerFormats($, fullText, html);
+  const answerFormats = analyzeAnswerFormats($, fullText);
   
   // 3. Authority and Expertise Signals
   const authoritySignals = detectAuthoritySignals($, html, fullText);
@@ -587,7 +642,12 @@ function analyzeAIContent($: cheerio.CheerioAPI, html: string, basicContent: any
 }
 
 // 1. Advanced Entity Detection using Pattern Matching
-function detectEntitiesAdvanced(text: string, html: string): CrawledContent['aiAnalysisData']['detectedEntities'] {
+function detectEntitiesAdvanced(text: string, html: string): {
+  persons: string[];
+  organizations: string[];
+  locations: string[];
+  brands: string[];
+} {
   const entities = {
     persons: [] as string[],
     organizations: [] as string[],
@@ -664,7 +724,12 @@ function detectEntitiesAdvanced(text: string, html: string): CrawledContent['aiA
 }
 
 // 2. Answer Format Analysis for AI Digestibility
-function analyzeAnswerFormats($: cheerio.CheerioAPI, text: string, html: string): CrawledContent['aiAnalysisData']['answerFormats'] {
+function analyzeAnswerFormats($: cheerio.CheerioAPI, text: string): {
+  qaCount: number;
+  listCount: number;
+  stepByStepCount: number;
+  definitionCount: number;
+} {
   // Q&A format detection
   const qaPatterns = [
     /\b(?:what is|what are|how to|how do|why does|why do|when should|when do|where is|where can|which|who is)\b/gi,
@@ -714,7 +779,13 @@ function analyzeAnswerFormats($: cheerio.CheerioAPI, text: string, html: string)
 }
 
 // 3. Authority and Expertise Signals Detection
-function detectAuthoritySignals($: cheerio.CheerioAPI, html: string, text: string): CrawledContent['aiAnalysisData']['authoritySignals'] {
+function detectAuthoritySignals($: cheerio.CheerioAPI, html: string, text: string): {
+  authorBylines: string[];
+  publicationDates: string[];
+  lastModified?: string;
+  credentialMentions: string[];
+  authorityLinks: string[];
+} {
   const authoritySignals = {
     authorBylines: [] as string[],
     publicationDates: [] as string[],
@@ -793,7 +864,13 @@ function detectAuthoritySignals($: cheerio.CheerioAPI, html: string, text: strin
 }
 
 // 4. Factual Accuracy Indicators
-function analyzeFactualIndicators(text: string, links: any[]): CrawledContent['aiAnalysisData']['factualIndicators'] {
+function analyzeFactualIndicators(text: string, links: { href: string; text: string; internal: boolean }[]): {
+  citations: number;
+  statistics: number;
+  dates: string[];
+  sources: string[];
+  externalLinks: number;
+} {
   // Citation patterns
   const citationPatterns = [
     /\[\d+\]/g, // [1], [2], etc.
@@ -856,7 +933,19 @@ function analyzeFactualIndicators(text: string, links: any[]): CrawledContent['a
 }
 
 // 5. AI Bot Accessibility Analysis
-function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): CrawledContent['aiAnalysisData']['botAccessibility'] {
+function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): {
+  aiBotDirectives: {
+    gptBot: 'allowed' | 'disallowed' | 'unspecified';
+    googleExtended: 'allowed' | 'disallowed' | 'unspecified';
+    chatgptUser: 'allowed' | 'disallowed' | 'unspecified';
+    claudeWeb: 'allowed' | 'disallowed' | 'unspecified';
+    bingBot: 'allowed' | 'disallowed' | 'unspecified';
+    ccBot: 'allowed' | 'disallowed' | 'unspecified';
+    perplexityBot: 'allowed' | 'disallowed' | 'unspecified';
+  };
+  metaRobotsAI: string[];
+  contentAvailability: 'full' | 'partial' | 'js-dependent';
+} {
   const botAccessibility = {
     aiBotDirectives: {
       gptBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
@@ -882,7 +971,6 @@ function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): Crawled
   });
   
   // Content availability analysis
-  const scriptTags = $('script').length;
   const noscriptContent = $('noscript').length;
   const totalContent = html.length;
   const serverSideContent = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').length;
@@ -901,7 +989,12 @@ function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): Crawled
 }
 
 // 6. Voice Search Optimization Analysis
-function analyzeVoiceSearchOptimization(text: string, $: cheerio.CheerioAPI): CrawledContent['aiAnalysisData']['voiceSearchOptimization'] {
+function analyzeVoiceSearchOptimization(text: string, $: cheerio.CheerioAPI): {
+  naturalLanguagePatterns: number;
+  conversationalContent: number;
+  questionFormats: number;
+  speakableContent: boolean;
+} {
   // Natural language patterns for voice search
   const naturalLanguagePatterns = [
     /\bhow to\b/gi,

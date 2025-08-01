@@ -1928,7 +1928,6 @@ function analyzeAnswerPotential(content: CrawledContent): number {
   if (voiceSearchOptimization.speakableContent) score += 5;
   
   // Featured snippet potential
-  const text = content.paragraphs.join(' ');
   const paragraphLengths = content.paragraphs.map(p => p.length);
   const idealParas = paragraphLengths.filter(len => len >= 40 && len <= 160).length;
   

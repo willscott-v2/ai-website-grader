@@ -235,7 +235,6 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             'Factual Accuracy': analysis.aiOptimization.factualAccuracy,
             'Topical Authority': analysis.aiOptimization.topicalAuthority,
             'Content Freshness': analysis.aiOptimization.contentFreshness,
-            '─ Legacy Metrics ─': '─',
             'Content Chunkability': analysis.aiOptimization.chunkability,
             'Q&A Format': analysis.aiOptimization.qaFormat,
             'Entity Recognition': analysis.aiOptimization.entityRecognition,
