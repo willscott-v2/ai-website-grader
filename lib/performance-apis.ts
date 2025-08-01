@@ -91,7 +91,10 @@ export async function getPageSpeedInsights(url: string): Promise<{
     // Check if API key is available (optional)
     const apiKey = process.env.GOOGLE_PAGESPEED_API_KEY;
     
+    console.log('🔍 PageSpeed API Key check:', apiKey ? 'Found' : 'Not found');
+    
     if (!apiKey) {
+      console.log('📊 Using estimated performance metrics (no API key)');
       // Return estimated values based on content analysis
       return getEstimatedPerformanceMetrics();
     }
@@ -104,6 +107,8 @@ export async function getPageSpeedInsights(url: string): Promise<{
       strategy: 'mobile'
     });
     
+    console.log('🚀 Making PageSpeed API request to:', `${pagespeedUrl}?${params.toString().replace(apiKey, '[HIDDEN]')}`);
+    
     const response = await fetch(`${pagespeedUrl}?${params.toString()}`, {
       headers: {
         'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
@@ -111,9 +116,11 @@ export async function getPageSpeedInsights(url: string): Promise<{
     });
     
     if (!response.ok) {
+      console.log('❌ PageSpeed API failed:', response.status, response.statusText);
       throw new Error(`PageSpeed API failed: ${response.status}`);
     }
     
+    console.log('✅ PageSpeed API response received');
     const data = await response.json();
     
     // Extract Core Web Vitals
@@ -123,12 +130,15 @@ export async function getPageSpeedInsights(url: string): Promise<{
     const cls = metrics?.['cumulative-layout-shift']?.numericValue || 0;
     const performanceScore = data.lighthouseResult?.categories?.performance?.score || 0;
     
-    return {
+    const result = {
       lcp: Math.round(lcp),
       fid: Math.round(fid),
       cls: Math.round(cls * 1000) / 1000, // Keep 3 decimal places
       score: Math.round(performanceScore * 100)
     };
+    
+    console.log('📊 Real PageSpeed metrics:', result);
+    return result;
     
   } catch (error) {
     console.warn('PageSpeed Insights failed:', error);
