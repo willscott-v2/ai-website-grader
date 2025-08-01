@@ -393,7 +393,7 @@ function generateMarkdownContent(
   // Add lists
   $('ul, ol').each((_, list) => {
     const $list = $(list);
-    const isOrdered = list.tagName.toLowerCase() === 'ol';
+    const isOrdered = $list.prop('tagName')?.toLowerCase() === 'ol';
     
     $list.find('li').each((index, item) => {
       const text = $(item).text().trim();
