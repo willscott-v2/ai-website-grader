@@ -445,8 +445,9 @@ function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxI
   const formFields: string[] = [];
   
   forms.find('input, textarea, select').each((_, field) => {
-    const type = $(field).attr('type') || field.tagName.toLowerCase();
-    const name = $(field).attr('name') || $(field).attr('id') || type;
+    const $field = $(field);
+    const type = $field.attr('type') || $field.prop('tagName')?.toLowerCase() || 'input';
+    const name = $field.attr('name') || $field.attr('id') || type;
     formFields.push(name);
   });
   
