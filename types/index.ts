@@ -222,12 +222,20 @@ export interface CrawledContent {
         lcp: number;
         fid: number;
         cls: number;
+        score: number;
       };
       htmlValidation?: {
         errors: number;
         warnings: number;
+        isValid: boolean;
+        messages: Array<{
+          type: 'error' | 'warning' | 'info';
+          message: string;
+          line?: number;
+        }>;
       };
       accessibilityScore?: number;
+      performanceScore?: number;
     };
   };
 }

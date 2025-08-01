@@ -392,6 +392,93 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         />
       </div>
 
+      {/* Performance Metrics from Free APIs */}
+      {analysis.crawledContent.aiAnalysisData?.performanceMetrics && (
+        <div style={{
+          marginTop: '40px',
+          padding: '25px',
+          backgroundColor: '#f0fff0',
+          borderRadius: '12px',
+          border: '1px solid #90ee90'
+        }}>
+          <h3 style={{ color: '#228b22', marginBottom: '20px' }}>⚡ Performance Analysis (Free APIs)</h3>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            {/* Core Web Vitals */}
+            {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals && (
+              <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
+                <h4>🎯 Core Web Vitals</h4>
+                <p><strong>Performance Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.score}/100</p>
+                <p><strong>LCP:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.lcp}ms</p>
+                <p><strong>FID:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.fid}ms</p>
+                <p><strong>CLS:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.cls}</p>
+                <p style={{ fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
+                  📝 Add GOOGLE_PAGESPEED_API_KEY for real Core Web Vitals data
+                </p>
+              </div>
+            )}
+            
+            {/* HTML Validation */}
+            {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation && (
+              <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
+                <h4>✅ HTML Validation (W3C)</h4>
+                <p><strong>Status:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.isValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p><strong>Errors:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors}</p>
+                <p><strong>Warnings:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings}</p>
+                {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 0 && (
+                  <details style={{ marginTop: '10px' }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>View Issues</summary>
+                    <ul style={{ fontSize: '12px', marginTop: '5px' }}>
+                      {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.slice(0, 3).map((msg, idx) => (
+                        <li key={idx} style={{ color: msg.type === 'error' ? '#d32f2f' : '#f57c00' }}>
+                          {msg.type.toUpperCase()}: {msg.message}
+                          {msg.line && ` (Line ${msg.line})`}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            )}
+            
+            {/* Accessibility Score */}
+            {analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore !== undefined && (
+              <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
+                <h4>♿ Accessibility Analysis</h4>
+                <p><strong>Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore}/100</p>
+                <p style={{ fontSize: '12px', color: '#666' }}>
+                  Based on alt text coverage, ARIA attributes, semantic HTML, and form labels
+                </p>
+              </div>
+            )}
+            
+            {/* Overall Performance */}
+            {analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore !== undefined && (
+              <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
+                <h4>📊 Combined Performance</h4>
+                <p><strong>Overall Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore}/100</p>
+                <p style={{ fontSize: '12px', color: '#666' }}>
+                  Weighted: 40% Core Web Vitals, 30% HTML Validity, 30% Accessibility
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e8f5e8', borderRadius: '8px' }}>
+            <h4>🆓 Free API Information</h4>
+            <p style={{ fontSize: '14px', margin: '5px 0' }}>
+              <strong>W3C HTML Validator:</strong> Free validation service (no signup required)
+            </p>
+            <p style={{ fontSize: '14px', margin: '5px 0' }}>
+              <strong>Google PageSpeed Insights:</strong> Optional free API (25,000 requests/day)
+            </p>
+            <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+              To enable real Core Web Vitals data, add <code>GOOGLE_PAGESPEED_API_KEY</code> to your environment variables.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Page Content (Markdown) */}
       {analysis.crawledContent.markdownContent && (
         <div style={{ 

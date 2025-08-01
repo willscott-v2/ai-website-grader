@@ -11,6 +11,7 @@ import {
   analyzeMobileOptimization,
   analyzeSchemaAnalysis
 } from './analyzer';
+// Performance analysis functions are used in the crawler module
 
 export async function analyzeWebsite(url: string, textContent?: string): Promise<WebsiteAnalysis> {
   let content: CrawledContent;
@@ -18,7 +19,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   try {
     if (textContent) {
       // Use provided text content
-      content = parseTextContent(textContent);
+      content = await parseTextContent(textContent);
       content.title = content.title || 'Manual Content Analysis';
     } else {
       // Crawl the website
@@ -41,16 +42,32 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     throw new Error(`Failed to analyze website: ${errorMessage}`);
   }
   
-  // Run all analyses
-  const technicalSEO = analyzeTechnicalSEO(content);
-  const technicalCrawlability = analyzeTechnicalCrawlability(content);
-  const contentQuality = analyzeContentQuality(content);
-  const aiOptimization = analyzeAIOptimization(content);
-  const mobileOptimization = analyzeMobileOptimization(content);
-  const schemaAnalysis = analyzeSchemaAnalysis(content);
-  const authority = analyzeAuthority(content);
-  const userExperience = analyzeUserExperience(content);
-  const contentStructure = analyzeContentStructure(content);
+  // Run all analyses in parallel for better performance
+  console.log('🔄 Running parallel analysis...');
+  
+  const [
+    technicalSEO,
+    technicalCrawlability,
+    contentQuality,
+    aiOptimization,
+    mobileOptimization,
+    schemaAnalysis,
+    authority,
+    userExperience,
+    contentStructure
+  ] = await Promise.all([
+    Promise.resolve(analyzeTechnicalSEO(content)),
+    Promise.resolve(analyzeTechnicalCrawlability(content)),
+    Promise.resolve(analyzeContentQuality(content)),
+    Promise.resolve(analyzeAIOptimization(content)),
+    Promise.resolve(analyzeMobileOptimization(content)),
+    Promise.resolve(analyzeSchemaAnalysis(content)),
+    Promise.resolve(analyzeAuthority(content)),
+    Promise.resolve(analyzeUserExperience(content)),
+    Promise.resolve(analyzeContentStructure(content))
+  ]);
+  
+  console.log('✅ Parallel analysis complete');
   
   // Calculate weighted overall score
   const overallScore = calculateOverallScore({

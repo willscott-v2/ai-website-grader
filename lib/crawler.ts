@@ -1,5 +1,11 @@
 import * as cheerio from 'cheerio';
 import { CrawledContent } from '@/types';
+import { 
+  analyzePerformanceMetrics, 
+  performanceCache, 
+  createCacheKey, 
+  shouldUseCache 
+} from './performance-apis';
 
 export async function crawlWebsite(url: string): Promise<CrawledContent> {
   // Validate and normalize URL
@@ -29,7 +35,7 @@ export async function crawlWebsite(url: string): Promise<CrawledContent> {
     const robotsInfoPromise = fetchRobotsInfo(normalizedUrl);
     
     // Parse HTML content
-    const content = parseHtmlContent(html, normalizedUrl);
+    const content = await parseHtmlContent(html, normalizedUrl);
     
     // Add robots info
     content.robotsInfo = await robotsInfoPromise;
@@ -42,10 +48,10 @@ export async function crawlWebsite(url: string): Promise<CrawledContent> {
   }
 }
 
-export function parseTextContent(text: string): CrawledContent {
+export async function parseTextContent(text: string): Promise<CrawledContent> {
   // Handle manual text input as basic HTML
   const fakeHtml = `<html><body><div>${text.replace(/\n/g, '</p><p>')}</div></body></html>`;
-  const content = parseHtmlContent(fakeHtml, 'manual-input');
+  const content = await parseHtmlContent(fakeHtml, 'manual-input');
   
   // Add default values for manual input
   content.robotsInfo = {
@@ -141,7 +147,50 @@ export function parseTextContent(text: string): CrawledContent {
   return content;
 }
 
-function parseHtmlContent(html: string, url: string): CrawledContent {
+// Performance analysis with caching
+async function analyzePerformanceWithCaching(url: string, html: string): Promise<{
+  coreWebVitals?: {
+    lcp: number;
+    fid: number;
+    cls: number;
+    score: number;
+  };
+  htmlValidation?: {
+    errors: number;
+    warnings: number;
+    isValid: boolean;
+    messages: Array<{
+      type: 'error' | 'warning' | 'info';
+      message: string;
+      line?: number;
+    }>;
+  };
+  accessibilityScore?: number;
+  performanceScore?: number;
+}> {
+  // Check cache first (if not localhost)
+  if (shouldUseCache(url)) {
+    const cacheKey = createCacheKey(url, 'performance');
+    const cached = performanceCache.get(cacheKey);
+    if (cached) {
+      console.log('📋 Using cached performance data');
+      return cached;
+    }
+  }
+  
+  // Perform analysis
+  const metrics = await analyzePerformanceMetrics(url, html);
+  
+  // Cache results (if not localhost)
+  if (shouldUseCache(url)) {
+    const cacheKey = createCacheKey(url, 'performance');
+    performanceCache.set(cacheKey, metrics, 300000); // Cache for 5 minutes
+  }
+  
+  return metrics;
+}
+
+async function parseHtmlContent(html: string, url: string): Promise<CrawledContent> {
   const $ = cheerio.load(html) as cheerio.CheerioAPI;
   
   // Extract title
@@ -215,6 +264,9 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
   
   // Enhanced AI analysis
   const aiAnalysisData = analyzeAIContent($, html, { title, paragraphs, headings, links });
+  
+  // Performance analysis (async - may use free APIs)
+  const performanceMetrics = await analyzePerformanceWithCaching(url, html);
 
   return {
     title,
@@ -233,7 +285,56 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
     enhancedSchemaInfo,
     markdownContent,
     uxInfo,
-    aiAnalysisData
+    aiAnalysisData: aiAnalysisData ? {
+      ...aiAnalysisData,
+      performanceMetrics
+    } : {
+      detectedEntities: {
+        persons: [],
+        organizations: [],
+        locations: [],
+        brands: []
+      },
+      answerFormats: {
+        qaCount: 0,
+        listCount: 0,
+        stepByStepCount: 0,
+        definitionCount: 0
+      },
+      authoritySignals: {
+        authorBylines: [],
+        publicationDates: [],
+        credentialMentions: [],
+        authorityLinks: []
+      },
+      factualIndicators: {
+        citations: 0,
+        statistics: 0,
+        dates: [],
+        sources: [],
+        externalLinks: 0
+      },
+      botAccessibility: {
+        aiBotDirectives: {
+          gptBot: 'unspecified',
+          googleExtended: 'unspecified',
+          chatgptUser: 'unspecified',
+          claudeWeb: 'unspecified',
+          bingBot: 'unspecified',
+          ccBot: 'unspecified',
+          perplexityBot: 'unspecified'
+        },
+        metaRobotsAI: [],
+        contentAvailability: 'full'
+      },
+      voiceSearchOptimization: {
+        naturalLanguagePatterns: 0,
+        conversationalContent: 0,
+        questionFormats: 0,
+        speakableContent: false
+      },
+      performanceMetrics
+    }
   };
 }
 
