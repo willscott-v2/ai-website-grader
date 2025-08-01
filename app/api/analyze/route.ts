@@ -3,6 +3,11 @@ import { analyzeWebsite } from '@/lib/analysis-engine';
 
 export async function POST(request: NextRequest) {
   try {
+    // Debug environment variables
+    console.log('🔍 API Route - Environment check:');
+    console.log('GOOGLE_PAGESPEED_API_KEY exists:', !!process.env.GOOGLE_PAGESPEED_API_KEY);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    
     const body = await request.json();
     const { url, textContent } = body;
 
