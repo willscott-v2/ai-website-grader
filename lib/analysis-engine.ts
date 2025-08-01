@@ -114,17 +114,18 @@ export function calculateOverallScore(scores: {
   userExperience: number;
   contentStructure: number;
 }): number {
-  // Weighted scoring - AI optimization, mobile, and crawlability are most important
+  // Enhanced AI Search Weighted Scoring Framework
+  // Prioritizes factors that directly impact AI search rankings and content digestibility
   const weights = {
-    aiOptimization: 0.22,           // 22% - Most important for AI search content
-    mobileOptimization: 0.18,       // 18% - Critical for modern SEO (mobile-first indexing)
-    technicalCrawlability: 0.16,   // 16% - Critical for AI bot access (Scrunch-style)
-    schemaAnalysis: 0.14,          // 14% - Important for rich results and AI understanding
-    contentQuality: 0.12,          // 12% - Quality content is crucial
-    technicalSEO: 0.10,            // 10% - Technical foundation
-    authority: 0.05,               // 5% - Trust and credibility
-    contentStructure: 0.02,        // 2% - Content structure
-    userExperience: 0.01           // 1% - User experience (least critical for AI)
+    aiOptimization: 0.25,          // 25% - AI content digestibility, answer potential, factual accuracy
+    mobileOptimization: 0.20,      // 20% - Mobile-first indexing, voice search readiness
+    technicalCrawlability: 0.16,   // 16% - AI bot accessibility, content availability
+    schemaAnalysis: 0.12,          // 12% - AI-friendly structured data (FAQ, How-to, etc.)
+    contentQuality: 0.10,          // 10% - Content foundation and expertise
+    technicalSEO: 0.08,            // 8% - Technical performance and SEO basics
+    authority: 0.05,               // 5% - Trust signals and topical authority
+    contentStructure: 0.03,        // 3% - Content organization and hierarchy
+    userExperience: 0.01           // 1% - Traditional UX (less critical for AI search)
   };
   
   const weightedScore = 

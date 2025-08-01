@@ -162,6 +162,9 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
   
   // Analyze UX information
   const uxInfo = analyzeUXInfo($, html);
+  
+  // Enhanced AI analysis
+  const aiAnalysisData = analyzeAIContent($, html, content);
 
   return {
     title,
@@ -179,7 +182,8 @@ function parseHtmlContent(html: string, url: string): CrawledContent {
     mobileInfo,
     enhancedSchemaInfo,
     markdownContent,
-    uxInfo
+    uxInfo,
+    aiAnalysisData
   };
 }
 
@@ -231,7 +235,10 @@ async function fetchRobotsInfo(url: string): Promise<CrawledContent['robotsInfo'
     
     const content = await response.text();
     const allowsAllBots = content.includes('User-agent: *') && content.includes('Allow: /');
-    const hasSpecificBotRules = content.includes('GPTBot') || content.includes('ChatGPT') || content.includes('CCBot');
+    
+    // Enhanced AI bot detection
+    const aiBotNames = ['GPTBot', 'ChatGPT', 'CCBot', 'Google-Extended', 'Claude-Web', 'PerplexityBot', 'BingBot'];
+    const hasSpecificBotRules = aiBotNames.some(bot => content.includes(bot));
     
     return {
       hasRobotsTxt: true,
@@ -330,11 +337,51 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
     }
   });
   
+  // Enhanced AI-friendly schema analysis
+  const aiFriendlySchemas: string[] = [];
+  let conversationalElements = 0;
+  
+  // Check for AI-friendly schema types
+  const aiFriendlyTypes = ['FAQPage', 'QAPage', 'HowTo', 'Article', 'NewsArticle', 'BlogPosting', 'Recipe', 'Guide'];
+  schemaTypes.forEach(type => {
+    if (aiFriendlyTypes.includes(type)) {
+      aiFriendlySchemas.push(type);
+    }
+  });
+  
+  // Count conversational elements for AI optimization
+  schemaMarkup.forEach(schema => {
+    try {
+      const data = JSON.parse(schema);
+      
+      // Count FAQ/Q&A elements
+      if (data.mainEntity && Array.isArray(data.mainEntity)) {
+        conversationalElements += data.mainEntity.length;
+      } else if (data.mainEntity) {
+        conversationalElements += 1;
+      }
+      
+      // Count HowTo steps
+      if (data['@type'] === 'HowTo' && data.step) {
+        conversationalElements += Array.isArray(data.step) ? data.step.length : 1;
+      }
+      
+      // Count recipe instructions
+      if (data['@type'] === 'Recipe' && data.recipeInstructions) {
+        conversationalElements += Array.isArray(data.recipeInstructions) ? data.recipeInstructions.length : 1;
+      }
+    } catch {
+      // Invalid JSON, skip
+    }
+  });
+  
   return {
     jsonLdCount,
     microdataCount,
     schemaTypes,
-    validationErrors
+    validationErrors,
+    aiFriendlySchemas: [...new Set(aiFriendlySchemas)], // Remove duplicates
+    conversationalElements
   };
 }
 
@@ -504,5 +551,401 @@ function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxI
     hasLoadingIndicators,
     hasSocialProof,
     socialElements
+  };
+}
+
+// Enhanced AI Content Analysis using pattern-matching algorithms
+function analyzeAIContent($: cheerio.CheerioAPI, html: string, basicContent: any): CrawledContent['aiAnalysisData'] {
+  const fullText = basicContent.paragraphs.join(' ') + ' ' + basicContent.headings.map((h: any) => h.text).join(' ');
+  
+  // 1. Advanced Entity Detection using Smart Patterns
+  const detectedEntities = detectEntitiesAdvanced(fullText, html);
+  
+  // 2. Answer Format Analysis
+  const answerFormats = analyzeAnswerFormats($, fullText, html);
+  
+  // 3. Authority and Expertise Signals
+  const authoritySignals = detectAuthoritySignals($, html, fullText);
+  
+  // 4. Factual Accuracy Indicators
+  const factualIndicators = analyzeFactualIndicators(fullText, basicContent.links);
+  
+  // 5. AI Bot Accessibility Analysis
+  const botAccessibility = analyzeAIBotAccessibility($, html);
+  
+  // 6. Voice Search Optimization
+  const voiceSearchOptimization = analyzeVoiceSearchOptimization(fullText, $);
+  
+  return {
+    detectedEntities,
+    answerFormats,
+    authoritySignals,
+    factualIndicators,
+    botAccessibility,
+    voiceSearchOptimization
+  };
+}
+
+// 1. Advanced Entity Detection using Pattern Matching
+function detectEntitiesAdvanced(text: string, html: string): CrawledContent['aiAnalysisData']['detectedEntities'] {
+  const entities = {
+    persons: [] as string[],
+    organizations: [] as string[],
+    locations: [] as string[],
+    brands: [] as string[]
+  };
+  
+  // Person name patterns - Title Case with common patterns
+  const personPatterns = [
+    /\b(?:Dr\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?|CEO|President|Director|Author|By)\s+([A-Z][a-z]+ [A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\b/g,
+    /\bwritten by\s+([A-Z][a-z]+ [A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\b/gi,
+    /\bauthor:\s*([A-Z][a-z]+ [A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\b/gi
+  ];
+  
+  personPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(match => {
+        const name = match.replace(/^(?:Dr\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?|CEO|President|Director|Author|By|written by|author:)\s*/i, '').trim();
+        if (name && !entities.persons.includes(name)) {
+          entities.persons.push(name);
+        }
+      });
+    }
+  });
+  
+  // Organization patterns
+  const orgPatterns = [
+    /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:Inc\.?|LLC|Corp\.?|Ltd\.?|Company|Corporation|University|College|Institute|Foundation|Organization)\b/g,
+    /\b(?:University of|College of)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g
+  ];
+  
+  orgPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(match => {
+        if (!entities.organizations.includes(match)) {
+          entities.organizations.push(match);
+        }
+      });
+    }
+  });
+  
+  // Location patterns
+  const locationPatterns = [
+    /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*),\s*([A-Z]{2}|\b[A-Z][a-z]+)\b/g, // City, State/Country
+    /\bin\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*),\s*([A-Z]{2}|\b[A-Z][a-z]+)\b/g
+  ];
+  
+  locationPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(match => {
+        const location = match.replace(/^in\s+/i, '').trim();
+        if (!entities.locations.includes(location)) {
+          entities.locations.push(location);
+        }
+      });
+    }
+  });
+  
+  // Brand detection from structured data and meta tags
+  const brandFromSchema = html.match(/"brand":\s*"([^"]+)"/g);
+  if (brandFromSchema) {
+    brandFromSchema.forEach(match => {
+      const brand = match.match(/"([^"]+)"$/);
+      if (brand && brand[1] && !entities.brands.includes(brand[1])) {
+        entities.brands.push(brand[1]);
+      }
+    });
+  }
+  
+  return entities;
+}
+
+// 2. Answer Format Analysis for AI Digestibility
+function analyzeAnswerFormats($: cheerio.CheerioAPI, text: string, html: string): CrawledContent['aiAnalysisData']['answerFormats'] {
+  // Q&A format detection
+  const qaPatterns = [
+    /\b(?:what is|what are|how to|how do|why does|why do|when should|when do|where is|where can|which|who is)\b/gi,
+    /\?.*\n.*\b(?:answer|solution|result|because|since|due to)\b/gi
+  ];
+  
+  let qaCount = 0;
+  qaPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) qaCount += matches.length;
+  });
+  
+  // List structures (ordered and unordered)
+  const listCount = ($('ol').length + $('ul').length);
+  
+  // Step-by-step content detection
+  const stepPatterns = [
+    /\b(?:step \d+|step \w+)\b/gi,
+    /\b\d+\.\s+(?:[A-Z])/g,
+    /\b(?:first|second|third|fourth|fifth|next|then|finally|lastly)\b/gi
+  ];
+  
+  let stepByStepCount = 0;
+  stepPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) stepByStepCount += matches.length;
+  });
+  
+  // Definition detection
+  const definitionPatterns = [
+    /\b(?:definition|meaning|refers to|is defined as|can be defined as)\b/gi,
+    /\b\w+\s+(?:is|are|means|refers to)\b/g
+  ];
+  
+  let definitionCount = 0;
+  definitionPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) definitionCount += matches.length;
+  });
+  
+  return {
+    qaCount: Math.min(50, qaCount), // Cap to prevent inflated scores
+    listCount,
+    stepByStepCount: Math.min(20, stepByStepCount),
+    definitionCount: Math.min(10, definitionCount)
+  };
+}
+
+// 3. Authority and Expertise Signals Detection
+function detectAuthoritySignals($: cheerio.CheerioAPI, html: string, text: string): CrawledContent['aiAnalysisData']['authoritySignals'] {
+  const authoritySignals = {
+    authorBylines: [] as string[],
+    publicationDates: [] as string[],
+    lastModified: undefined as string | undefined,
+    credentialMentions: [] as string[],
+    authorityLinks: [] as string[]
+  };
+  
+  // Author byline detection
+  const authorSelectors = [
+    '.author', '.byline', '.writer', '.post-author',
+    '[class*="author"]', '[class*="byline"]', '[class*="writer"]',
+    'span[rel="author"]', '[itemprop="author"]'
+  ];
+  
+  authorSelectors.forEach(selector => {
+    $(selector).each((_, element) => {
+      const authorText = $(element).text().trim();
+      if (authorText && authorText.length > 2 && authorText.length < 100) {
+        authoritySignals.authorBylines.push(authorText);
+      }
+    });
+  });
+  
+  // Publication date extraction
+  const dateSelectors = [
+    'time[datetime]', '.date', '.published', '.post-date',
+    '[class*="date"]', '[class*="published"]', '[itemprop="datePublished"]'
+  ];
+  
+  dateSelectors.forEach(selector => {
+    $(selector).each((_, element) => {
+      const $element = $(element);
+      const datetime = $element.attr('datetime') || $element.text();
+      if (datetime) {
+        authoritySignals.publicationDates.push(datetime.trim());
+      }
+    });
+  });
+  
+  // Last modified detection
+  const lastModSelectors = ['[itemprop="dateModified"]', '.modified', '.updated', '.last-updated'];
+  lastModSelectors.forEach(selector => {
+    const lastMod = $(selector).first();
+    if (lastMod.length > 0) {
+      authoritySignals.lastModified = lastMod.attr('datetime') || lastMod.text().trim();
+    }
+  });
+  
+  // Credential mentions
+  const credentialPatterns = [
+    /\b(?:PhD|Ph\.D\.|MD|M\.D\.|MBA|M\.B\.A\.|MS|M\.S\.|BS|B\.S\.|Professor|Dr\.|Doctor)\b/g,
+    /\b(?:certified|licensed|board-certified|expert|specialist|consultant)\b/gi
+  ];
+  
+  credentialPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(match => {
+        if (!authoritySignals.credentialMentions.includes(match)) {
+          authoritySignals.credentialMentions.push(match);
+        }
+      });
+    }
+  });
+  
+  // Authority links detection (.edu, .gov, .org)
+  $('a[href*=".edu"], a[href*=".gov"], a[href*=".org"]').each((_, element) => {
+    const href = $(element).attr('href');
+    if (href && !authoritySignals.authorityLinks.includes(href)) {
+      authoritySignals.authorityLinks.push(href);
+    }
+  });
+  
+  return authoritySignals;
+}
+
+// 4. Factual Accuracy Indicators
+function analyzeFactualIndicators(text: string, links: any[]): CrawledContent['aiAnalysisData']['factualIndicators'] {
+  // Citation patterns
+  const citationPatterns = [
+    /\[\d+\]/g, // [1], [2], etc.
+    /\(\d{4}\)/g, // (2023), (2024), etc.
+    /\(\w+,?\s*\d{4}\)/g, // (Smith, 2023)
+    /\baccording to\b/gi,
+    /\bas reported by\b/gi,
+    /\bsource:\s*/gi
+  ];
+  
+  let citations = 0;
+  citationPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) citations += matches.length;
+  });
+  
+  // Statistics detection
+  const statisticPatterns = [
+    /\b\d+(?:\.\d+)?%/g, // Percentages
+    /\$\d+(?:,\d{3})*(?:\.\d{2})?/g, // Currency
+    /\b\d+(?:,\d{3})*\s+(?:people|users|customers|patients|studies|cases)\b/gi,
+    /\b(?:increased|decreased|grew|dropped)\s+by\s+\d+/gi
+  ];
+  
+  let statistics = 0;
+  statisticPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) statistics += matches.length;
+  });
+  
+  // Date extraction for content freshness
+  const datePattern = /\b(?:20[12]\d|19[89]\d)\b/g;
+  const dates = text.match(datePattern) || [];
+  
+  // Source analysis
+  const sourcePatterns = [
+    /\bstudy by\b/gi,
+    /\bresearch from\b/gi,
+    /\bdata from\b/gi,
+    /\breport by\b/gi,
+    /\bpublished in\b/gi
+  ];
+  
+  let sources = 0;
+  sourcePatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) sources += matches.length;
+  });
+  
+  // External links count
+  const externalLinks = links.filter(link => !link.internal).length;
+  
+  return {
+    citations: Math.min(50, citations),
+    statistics: Math.min(30, statistics),
+    dates: [...new Set(dates)].slice(0, 10), // Unique dates, max 10
+    sources: sources.toString().split(',').slice(0, 5), // Convert to string array, max 5
+    externalLinks: Math.min(100, externalLinks)
+  };
+}
+
+// 5. AI Bot Accessibility Analysis
+function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): CrawledContent['aiAnalysisData']['botAccessibility'] {
+  const botAccessibility = {
+    aiBotDirectives: {
+      gptBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      googleExtended: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      chatgptUser: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      claudeWeb: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      bingBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      ccBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified',
+      perplexityBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified'
+    },
+    metaRobotsAI: [] as string[],
+    contentAvailability: 'full' as 'full' | 'partial' | 'js-dependent'
+  };
+  
+  // Meta robots AI-specific tags
+  const metaRobots = $('meta[name="robots"], meta[name="googlebot"], meta[name="bingbot"]');
+  metaRobots.each((_, element) => {
+    const content = $(element).attr('content');
+    const name = $(element).attr('name');
+    if (content) {
+      botAccessibility.metaRobotsAI.push(`${name}: ${content}`);
+    }
+  });
+  
+  // Content availability analysis
+  const scriptTags = $('script').length;
+  const noscriptContent = $('noscript').length;
+  const totalContent = html.length;
+  const serverSideContent = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').length;
+  
+  const contentRatio = serverSideContent / totalContent;
+  
+  if (contentRatio > 0.8) {
+    botAccessibility.contentAvailability = 'full';
+  } else if (contentRatio > 0.5 || noscriptContent > 0) {
+    botAccessibility.contentAvailability = 'partial';
+  } else {
+    botAccessibility.contentAvailability = 'js-dependent';
+  }
+  
+  return botAccessibility;
+}
+
+// 6. Voice Search Optimization Analysis
+function analyzeVoiceSearchOptimization(text: string, $: cheerio.CheerioAPI): CrawledContent['aiAnalysisData']['voiceSearchOptimization'] {
+  // Natural language patterns for voice search
+  const naturalLanguagePatterns = [
+    /\bhow to\b/gi,
+    /\bwhat is\b/gi,
+    /\bwhere can I\b/gi,
+    /\bwhen should\b/gi,
+    /\bwhy does\b/gi,
+    /\bnear me\b/gi,
+    /\bbest way to\b/gi
+  ];
+  
+  let naturalLanguageCount = 0;
+  naturalLanguagePatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) naturalLanguageCount += matches.length;
+  });
+  
+  // Conversational content detection
+  const conversationalPatterns = [
+    /\byou can\b/gi,
+    /\byou should\b/gi,
+    /\byou need\b/gi,
+    /\blet's\b/gi,
+    /\bwe'll\b/gi,
+    /\bhere's\b/gi
+  ];
+  
+  let conversationalContent = 0;
+  conversationalPatterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) conversationalContent += matches.length;
+  });
+  
+  // Question format detection
+  const questionCount = (text.match(/\?/g) || []).length;
+  
+  // Speakable content detection
+  const speakableContent = $('[itemscope][itemtype*="speakable"]').length > 0 ||
+                          $('[vocab*="speakable"]').length > 0;
+  
+  return {
+    naturalLanguagePatterns: Math.min(20, naturalLanguageCount),
+    conversationalContent: Math.min(30, conversationalContent),
+    questionFormats: Math.min(15, questionCount),
+    speakableContent
   };
 } 

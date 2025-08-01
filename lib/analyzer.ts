@@ -261,7 +261,24 @@ export function analyzeAIOptimization(content: CrawledContent): AIOptimization {
     ));
   }
   
-  const score = Math.round((chunkability + qaFormat + entityRecognition + factualDensity + semanticClarity + contentStructureForAI + contextualRelevance) / 7);
+  // NEW: Enhanced AI metrics using advanced pattern analysis
+  const aiContentDigestibility = analyzeAIContentDigestibility(content);
+  const answerPotential = analyzeAnswerPotential(content);
+  const factualAccuracy = analyzeFactualAccuracy(content);
+  const topicalAuthority = analyzeTopicalAuthority(content);
+  const contentFreshness = analyzeContentFreshness(content);
+  
+  // Enhanced scoring with new AI search factors (weighted toward new metrics)
+  const enhancedScore = Math.round((
+    aiContentDigestibility * 0.25 +
+    answerPotential * 0.20 +
+    factualAccuracy * 0.15 +
+    topicalAuthority * 0.15 +
+    contentFreshness * 0.10 +
+    (chunkability + qaFormat + entityRecognition + factualDensity + semanticClarity) * 0.15 / 5
+  ));
+  
+  const score = enhancedScore;
   const status = getScoreStatus(score);
   
   return {
@@ -269,6 +286,13 @@ export function analyzeAIOptimization(content: CrawledContent): AIOptimization {
     status,
     findings,
     recommendations,
+    // New enhanced metrics
+    aiContentDigestibility,
+    answerPotential,
+    factualAccuracy,
+    topicalAuthority,
+    contentFreshness,
+    // Legacy metrics (maintained for compatibility)
     chunkability,
     qaFormat,
     entityRecognition,
@@ -1839,6 +1863,263 @@ function analyzeSocialProof(content: CrawledContent): number {
   const text = content.paragraphs.join(' ').toLowerCase();
   const hasNumbers = /\d+[,.]?\d*[%k+]/.test(text);
   if (hasNumbers) score += 20;
+  
+  return Math.min(100, score);
+}
+
+// =====================================
+// ENHANCED AI SEARCH ANALYSIS FUNCTIONS
+// =====================================
+
+// 1. AI Content Digestibility - How well structured is content for AI processing
+function analyzeAIContentDigestibility(content: CrawledContent): number {
+  let score = 40;
+  
+  if (!content.aiAnalysisData) return score;
+  
+  const { answerFormats, detectedEntities } = content.aiAnalysisData;
+  
+  // Score based on Q&A format presence
+  if (answerFormats.qaCount > 0) score += 20;
+  if (answerFormats.listCount > 2) score += 15;
+  if (answerFormats.stepByStepCount > 0) score += 15;
+  if (answerFormats.definitionCount > 0) score += 10;
+  
+  // Score based on entity richness
+  const totalEntities = detectedEntities.persons.length + 
+                       detectedEntities.organizations.length + 
+                       detectedEntities.locations.length + 
+                       detectedEntities.brands.length;
+  
+  if (totalEntities > 5) score += 15;
+  else if (totalEntities > 2) score += 10;
+  
+  // Heading structure analysis
+  const headingLevels = new Set(content.headings.map(h => h.level));
+  if (headingLevels.size >= 3) score += 10; // Good hierarchy
+  
+  // Content organization bonus
+  if (content.headings.length > 3 && content.paragraphs.length > 5) {
+    const avgParasPerHeading = content.paragraphs.length / content.headings.length;
+    if (avgParasPerHeading >= 2 && avgParasPerHeading <= 5) score += 15;
+  }
+  
+  return Math.min(100, score);
+}
+
+// 2. Answer Potential - How well content answers specific questions
+function analyzeAnswerPotential(content: CrawledContent): number {
+  let score = 30;
+  
+  if (!content.aiAnalysisData) return score;
+  
+  const { answerFormats, voiceSearchOptimization } = content.aiAnalysisData;
+  
+  // Direct answer format scoring
+  score += Math.min(25, answerFormats.qaCount * 2); // Up to 25 points for Q&A content
+  score += Math.min(20, answerFormats.listCount * 2); // Up to 20 points for lists
+  score += Math.min(15, answerFormats.stepByStepCount * 3); // Up to 15 points for steps
+  score += Math.min(10, answerFormats.definitionCount * 5); // Up to 10 points for definitions
+  
+  // Voice search optimization bonus
+  if (voiceSearchOptimization.naturalLanguagePatterns > 5) score += 15;
+  if (voiceSearchOptimization.conversationalContent > 10) score += 10;
+  if (voiceSearchOptimization.questionFormats > 3) score += 10;
+  if (voiceSearchOptimization.speakableContent) score += 5;
+  
+  // Featured snippet potential
+  const text = content.paragraphs.join(' ');
+  const paragraphLengths = content.paragraphs.map(p => p.length);
+  const idealParas = paragraphLengths.filter(len => len >= 40 && len <= 160).length;
+  
+  if (idealParas > 0) score += Math.min(10, idealParas * 2);
+  
+  return Math.min(100, score);
+}
+
+// 3. Factual Accuracy - Evidence and source credibility
+function analyzeFactualAccuracy(content: CrawledContent): number {
+  let score = 20;
+  
+  if (!content.aiAnalysisData) return score;
+  
+  const { factualIndicators, authoritySignals } = content.aiAnalysisData;
+  
+  // Citations and sources
+  score += Math.min(25, factualIndicators.citations * 2);
+  score += Math.min(15, factualIndicators.statistics);
+  score += Math.min(10, factualIndicators.externalLinks);
+  score += Math.min(15, factualIndicators.sources.length * 3);
+  
+  // Date freshness
+  const currentYear = new Date().getFullYear();
+  const recentDates = factualIndicators.dates.filter(date => 
+    parseInt(date) >= currentYear - 2
+  ).length;
+  if (recentDates > 0) score += 10;
+  
+  // Authority links bonus (.edu, .gov, .org)
+  if (authoritySignals.authorityLinks.length > 0) {
+    score += Math.min(15, authoritySignals.authorityLinks.length * 5);
+  }
+  
+  // Publication indicators
+  if (authoritySignals.publicationDates.length > 0) score += 5;
+  if (authoritySignals.lastModified) score += 5;
+  
+  return Math.min(100, score);
+}
+
+// 4. Topical Authority - Expertise and credibility signals
+function analyzeTopicalAuthority(content: CrawledContent): number {
+  let score = 30;
+  
+  if (!content.aiAnalysisData) return score;
+  
+  const { authoritySignals, detectedEntities } = content.aiAnalysisData;
+  
+  // Author signals
+  if (authoritySignals.authorBylines.length > 0) score += 20;
+  score += Math.min(15, authoritySignals.credentialMentions.length * 5);
+  
+  // Publication authority
+  if (authoritySignals.publicationDates.length > 0) score += 10;
+  if (authoritySignals.lastModified) score += 5;
+  
+  // External authority validation
+  score += Math.min(20, authoritySignals.authorityLinks.length * 4);
+  
+  // Entity diversity (shows breadth of knowledge)
+  const entityDiversity = [
+    detectedEntities.persons.length > 0,
+    detectedEntities.organizations.length > 0,
+    detectedEntities.locations.length > 0,
+    detectedEntities.brands.length > 0
+  ].filter(Boolean).length;
+  
+  score += entityDiversity * 5;
+  
+  // Content depth indicators
+  const avgWordCount = content.wordCount;
+  if (avgWordCount > 1000) score += 10;
+  else if (avgWordCount > 500) score += 5;
+  
+  return Math.min(100, score);
+}
+
+// 5. Content Freshness - Recency and update indicators
+function analyzeContentFreshness(content: CrawledContent): number {
+  let score = 50; // Base score for static content
+  
+  if (!content.aiAnalysisData) return score;
+  
+  const { factualIndicators, authoritySignals } = content.aiAnalysisData;
+  
+  const currentYear = new Date().getFullYear();
+  
+  // Check for recent dates in content
+  const recentDates = factualIndicators.dates.filter(date => {
+    const year = parseInt(date);
+    return year >= currentYear - 1; // Current and previous year
+  }).length;
+  
+  if (recentDates > 0) score += 20;
+  else if (factualIndicators.dates.some(date => parseInt(date) >= currentYear - 2)) {
+    score += 10; // Some recent content
+  }
+  
+  // Publication/modification dates
+  if (authoritySignals.lastModified) {
+    try {
+      const modDate = new Date(authoritySignals.lastModified);
+      const monthsAgo = (Date.now() - modDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      
+      if (monthsAgo < 3) score += 20; // Very fresh
+      else if (monthsAgo < 6) score += 15; // Fresh
+      else if (monthsAgo < 12) score += 10; // Somewhat fresh
+    } catch {
+      // Invalid date format, use base score
+    }
+  }
+  
+  // Content update indicators in text
+  const text = content.paragraphs.join(' ').toLowerCase();
+  const updateIndicators = [
+    /updated?\s+(?:on|in)?\s*(?:january|february|march|april|may|june|july|august|september|october|november|december)?\s*\d{4}/gi,
+    /last\s+(?:updated|modified|revised)/gi,
+    /(?:current|latest|new|recent)\s+(?:version|update|revision)/gi
+  ];
+  
+  let updateSignals = 0;
+  updateIndicators.forEach(pattern => {
+    if (pattern.test(text)) updateSignals++;
+  });
+  
+  if (updateSignals > 0) score += Math.min(10, updateSignals * 5);
+  
+  return Math.min(100, score);
+}
+
+// Enhanced robots.txt analysis for AI bots
+function analyzeEnhancedRobotsAccess(content: CrawledContent): number {
+  let score = 70; // Default score if no robots.txt
+  
+  if (!content.aiAnalysisData?.botAccessibility) return score;
+  
+  const { aiBotDirectives } = content.aiAnalysisData.botAccessibility;
+  
+  // Check specific AI bot permissions
+  const aiBots = [
+    aiBotDirectives.gptBot,
+    aiBotDirectives.googleExtended,
+    aiBotDirectives.chatgptUser,
+    aiBotDirectives.claudeWeb,
+    aiBotDirectives.bingBot,
+    aiBotDirectives.ccBot,
+    aiBotDirectives.perplexityBot
+  ];
+  
+  const allowedBots = aiBots.filter(status => status === 'allowed').length;
+  const disallowedBots = aiBots.filter(status => status === 'disallowed').length;
+  
+  if (allowedBots === aiBots.length) {
+    score = 100; // All AI bots explicitly allowed
+  } else if (allowedBots > disallowedBots) {
+    score = 85; // More allowed than disallowed
+  } else if (disallowedBots > 0) {
+    score = 30; // Some bots are blocked
+  }
+  
+  return Math.min(100, score);
+}
+
+// Enhanced schema analysis for AI-friendly types
+function analyzeEnhancedSchemaPresence(content: CrawledContent): number {
+  let score = 20;
+  
+  if (!content.enhancedSchemaInfo) return score;
+  
+  const { aiFriendlySchemas, conversationalElements, schemaTypes } = content.enhancedSchemaInfo;
+  
+  // AI-friendly schema types bonus
+  const aiFriendlyTypes = ['FAQPage', 'QAPage', 'HowTo', 'Article', 'NewsArticle', 'BlogPosting'];
+  const hasAIFriendly = aiFriendlyTypes.some(type => 
+    schemaTypes.includes(type) || aiFriendlySchemas.includes(type)
+  );
+  
+  if (hasAIFriendly) score += 40;
+  
+  // Multiple schema types
+  if (schemaTypes.length > 1) score += 20;
+  if (schemaTypes.length > 3) score += 10;
+  
+  // Conversational elements for voice search
+  if (conversationalElements > 0) score += Math.min(20, conversationalElements * 5);
+  
+  // Structured content bonus
+  if (schemaTypes.includes('Organization')) score += 5;
+  if (schemaTypes.includes('Product')) score += 5;
+  if (schemaTypes.includes('Review')) score += 5;
   
   return Math.min(100, score);
 } 

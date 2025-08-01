@@ -44,6 +44,14 @@ export interface ContentQuality extends AnalysisScore {
 }
 
 export interface AIOptimization extends AnalysisScore {
+  // Core AI digestibility metrics
+  aiContentDigestibility: number;
+  answerPotential: number;
+  factualAccuracy: number;
+  topicalAuthority: number;
+  contentFreshness: number;
+  
+  // Legacy metrics (maintained for compatibility)
   chunkability: number;
   qaFormat: number;
   entityRecognition: number;
@@ -130,6 +138,8 @@ export interface CrawledContent {
     microdataCount: number;
     schemaTypes: string[];
     validationErrors: string[];
+    aiFriendlySchemas: string[]; // FAQPage, QAPage, HowTo, etc.
+    conversationalElements: number;
   };
   markdownContent?: string;
   uxInfo?: {
@@ -145,6 +155,80 @@ export interface CrawledContent {
     hasLoadingIndicators: boolean;
     hasSocialProof: boolean;
     socialElements: string[];
+  };
+  
+  // Enhanced AI analysis data
+  aiAnalysisData?: {
+    // Entity and context data
+    detectedEntities: {
+      persons: string[];
+      organizations: string[];
+      locations: string[];
+      brands: string[];
+    };
+    
+    // Content analysis
+    answerFormats: {
+      qaCount: number;
+      listCount: number;
+      stepByStepCount: number;
+      definitionCount: number;
+    };
+    
+    // Authority and expertise signals
+    authoritySignals: {
+      authorBylines: string[];
+      publicationDates: string[];
+      lastModified?: string;
+      credentialMentions: string[];
+      authorityLinks: string[];
+    };
+    
+    // Factual accuracy indicators
+    factualIndicators: {
+      citations: number;
+      statistics: number;
+      dates: string[];
+      sources: string[];
+      externalLinks: number;
+    };
+    
+    // AI bot accessibility
+    botAccessibility: {
+      aiBotDirectives: {
+        gptBot: 'allowed' | 'disallowed' | 'unspecified';
+        googleExtended: 'allowed' | 'disallowed' | 'unspecified';
+        chatgptUser: 'allowed' | 'disallowed' | 'unspecified';
+        claudeWeb: 'allowed' | 'disallowed' | 'unspecified';
+        bingBot: 'allowed' | 'disallowed' | 'unspecified';
+        ccBot: 'allowed' | 'disallowed' | 'unspecified';
+        perplexityBot: 'allowed' | 'disallowed' | 'unspecified';
+      };
+      metaRobotsAI: string[];
+      contentAvailability: 'full' | 'partial' | 'js-dependent';
+    };
+    
+    // Voice and local search
+    voiceSearchOptimization: {
+      naturalLanguagePatterns: number;
+      conversationalContent: number;
+      questionFormats: number;
+      speakableContent: boolean;
+    };
+    
+    // Performance data (free APIs)
+    performanceMetrics?: {
+      coreWebVitals?: {
+        lcp: number;
+        fid: number;
+        cls: number;
+      };
+      htmlValidation?: {
+        errors: number;
+        warnings: number;
+      };
+      accessibilityScore?: number;
+    };
   };
 }
 

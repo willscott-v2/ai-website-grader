@@ -214,21 +214,33 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         gap: '30px',
         marginTop: '40px'
       }}>
-        {/* AI Optimization */}
+        {/* Enhanced AI Search Optimization */}
         <ScoreCard
-          title="AI Optimization"
+          title="AI Search Optimization"
           score={analysis.aiOptimization.score}
           status={analysis.aiOptimization.status}
           findings={analysis.aiOptimization.findings}
-          recommendations={analysis.aiOptimization.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          recommendations={analysis.aiOptimization.recommendations.map(rec => {
+            if (typeof rec === 'string') return rec;
+            const priority = rec.priority === 'high' ? '🔴 HIGH' : rec.priority === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
+            let result = `${priority}: ${rec.text}`;
+            if (rec.expectedImpact && rec.timeToImplement) {
+              result += ` (Impact: ${rec.expectedImpact}, Time: ${rec.timeToImplement})`;
+            }
+            return result;
+          })}
           details={{
-            chunkability: analysis.aiOptimization.chunkability,
-            qaFormat: analysis.aiOptimization.qaFormat,
-            entityRecognition: analysis.aiOptimization.entityRecognition,
-            factualDensity: analysis.aiOptimization.factualDensity,
-            semanticClarity: analysis.aiOptimization.semanticClarity
+            'AI Content Digestibility': analysis.aiOptimization.aiContentDigestibility,
+            'Answer Potential': analysis.aiOptimization.answerPotential,
+            'Factual Accuracy': analysis.aiOptimization.factualAccuracy,
+            'Topical Authority': analysis.aiOptimization.topicalAuthority,
+            'Content Freshness': analysis.aiOptimization.contentFreshness,
+            '─ Legacy Metrics ─': '─',
+            'Content Chunkability': analysis.aiOptimization.chunkability,
+            'Q&A Format': analysis.aiOptimization.qaFormat,
+            'Entity Recognition': analysis.aiOptimization.entityRecognition,
+            'Factual Density': analysis.aiOptimization.factualDensity,
+            'Semantic Clarity': analysis.aiOptimization.semanticClarity
           }}
         />
 
