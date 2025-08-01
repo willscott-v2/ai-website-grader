@@ -20,26 +20,33 @@ export async function validateHTML(url: string, html?: string): Promise<{
   try {
     // Use W3C Markup Validator API (free, no signup required)
     const validatorUrl = 'https://validator.w3.org/nu/';
-    const params = new URLSearchParams();
+    
+    let response: Response;
     
     if (html) {
       // Validate HTML content directly
-      params.append('doc', html);
-      params.append('out', 'json');
+      response = await fetch(validatorUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
+        },
+        body: html,
+      });
     } else {
       // Validate by URL
-      params.append('doc', url);
-      params.append('out', 'json');
+      const params = new URLSearchParams({
+        doc: url,
+        out: 'json'
+      });
+      
+      response = await fetch(`${validatorUrl}?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
+        },
+      });
     }
-    
-    const response = await fetch(validatorUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
-      },
-      body: params.toString(),
-    });
     
     if (!response.ok) {
       throw new Error(`HTML validation failed: ${response.status}`);
@@ -114,9 +121,11 @@ export async function getPageSpeedInsights(url: string): Promise<{
     });
     
     if (!response.ok) {
+      console.log('PageSpeed API failed:', response.status, response.statusText);
       throw new Error(`PageSpeed API failed: ${response.status}`);
     }
     
+    console.log('PageSpeed API response received successfully');
     const data = await response.json();
     
     // Extract Core Web Vitals
